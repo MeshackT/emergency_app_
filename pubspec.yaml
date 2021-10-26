@@ -41,8 +41,7 @@ dependencies:
   fluttertoast: ^8.0.8
   firebase: ^9.0.2
   shared_preferences: ^2.0.8
-  geolocator: ^7.7.1
-  geocoder: ^0.2.1
+
 
 dev_dependencies:
   flutter_test:

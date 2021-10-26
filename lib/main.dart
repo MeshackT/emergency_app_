@@ -1,37 +1,56 @@
 import 'dart:async';
 
+import 'package:afpemergencyapplication/AmbulanceScreen.dart';
+import 'package:afpemergencyapplication/CallForHelp.dart';
+import 'package:afpemergencyapplication/FireFighterScreen.dart';
 import 'package:afpemergencyapplication/HomeScreen.dart';
 import 'package:afpemergencyapplication/LogIn.dart';
+import 'package:afpemergencyapplication/PoliceScreen.dart';
+import 'package:afpemergencyapplication/ThreeButtonsScreens.dart';
+import 'package:afpemergencyapplication/UserProfile.dart';
 import 'package:afpemergencyapplication/UserRegister.dart';
 import 'package:afpemergencyapplication/updateProfile.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  var status = preferences.getBool('isLoggedIn') ?? false;
-
-  if (kDebugMode) {
-    print(status);
-  }
 
   runApp(MaterialApp(
-    // home: EmergencyType(),
     debugShowCheckedModeBanner: false,
+
+    routes: {
+      ////user login and register
+      LogIn.routeName: (ctx) => const LogIn(),
+      UserRegister.routeName: (ctx) => const UserRegister(),
+      ////
+      EmergencyType.routeName: (ctx) => const EmergencyType(),
+      ////update profile
+      UpdateProfile.routeName: (ctx) => const UpdateProfile(),
+      UserProfile.routeName: (ctx) => const UserProfile(),
+      ////Navigation screens
+      AmbulanceScreen.routeName: (ctx) => const AmbulanceScreen(),
+      FireFighterScreen.routeName: (ctx) => const FireFighterScreen(),
+      PoliceScreen.routeName: (ctx) => const PoliceScreen(),
+      ThreeButtonsScreen.routeName: (ctx) => const ThreeButtonsScreen(),
+      CallForHelp.routeName: (ctx) => const CallForHelp(),
+      SplashScreen.routeName: (ctx) => const SplashScreen(),
+    },
+
+    /// check if user is signed (Open Chat page ) if user is not signed in (open welcome page)
+    initialRoute: FirebaseAuth.instance.currentUser != null
+        ? EmergencyType.routeName
+        : SplashScreen.routeName,
+    home: const SplashScreen(),
     // home: const SplashScreen(),
     // home: LogIn(),
     // home: UserRegister(),
-    home: EmergencyType(),
-    routes: {
-      LogIn.routeName: (ctx) => const LogIn(),
-      UserRegister.routeName: (ctx) => const UserRegister(),
-      UpdateProfile.routeName: (ctx) => const UpdateProfile(),
-      EmergencyType.routeName: (ctx) => const EmergencyType(),
-    },
+    // home: const EmergencyType(),
+    // home: UserProfile(),
+    // home: ThreeButtonsScreen(),
+    // home: AmbulanceScreen(),
 
     theme: ThemeData(
       primaryColor: Colors.green,
@@ -43,18 +62,34 @@ Future main() async {
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
+  static const routeName = '/splashScreen';
 
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  late StreamSubscription<User?> user;
+
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 3), () {
-      Navigator.of(context)
-          .pushReplacement(MaterialPageRoute(builder: (_) => const LogIn()));
+    late StreamSubscription<User?> user;
+
+    // Timer(const Duration(seconds: 3), () {
+    //   Navigator.of(context)
+    //       .pushReplacement(MaterialPageRoute(builder: (_) => const LogIn()));
+    // });
+    user = FirebaseAuth.instance.authStateChanges().listen((user) {
+      if (user == null) {
+        print('User is currently signed out! then go to splash screen');
+        Timer(const Duration(seconds: 3), () {
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => const LogIn()));
+        });
+      } else {
+        print('User is signed in!');
+      }
     });
   }
 

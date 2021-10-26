@@ -3,16 +3,22 @@ class UserModel {
   String? email;
   String? phoneNumber;
   String? password;
-  String? firstNames;
-  String? location;
+  String? fullName;
+  String? address;
 
   UserModel(
       {this.uid,
       this.email,
       this.phoneNumber,
       this.password,
-      this.firstNames,
-      this.location});
+      this.fullName,
+      this.address});
+
+  @override
+  String toString() {
+    return 'Details\n\nemail: $email\nphoneNumber: $phoneNumber\n'
+        'password: $password\nfullName: $fullName\n\naddress: $address';
+  }
 
   //getting data from the server
   factory UserModel.fromMap(map) {
@@ -20,9 +26,8 @@ class UserModel {
       uid: map['uid'],
       email: map['email'],
       phoneNumber: map['phoneNumber'],
-      password: map['password'],
-      firstNames: map['firstNames'],
-      location: map['location'],
+      fullName: map['fullName'],
+      address: map['address'],
     );
   }
 
@@ -33,8 +38,8 @@ class UserModel {
       'email': email,
       'phoneNumber': phoneNumber,
       'password': password,
-      'firstNames': firstNames,
-      'location': location,
+      'fullName': fullName,
+      'address': address,
     };
   }
 }
