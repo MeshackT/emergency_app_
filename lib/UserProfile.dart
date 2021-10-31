@@ -28,11 +28,6 @@ class _UserProfileState extends State<UserProfile> {
   String phoneNumber = "";
   String fullName = "";
   String address = "";
-  // uid: map['uid'],
-  // email: map['email'],
-  // phoneNumber: map['phoneNumber'],
-  // fullName: map['fullName'],
-  // address: map['address'],
 
   @override
   void initState() {
@@ -118,46 +113,19 @@ class _UserProfileState extends State<UserProfile> {
                           if (snapshot.connectionState ==
                               ConnectionState.done) {
                             return Text(
-                              "$userModel",
+                              "$fullName",
                               style: const TextStyle(
                                   fontSize: 18.0,
                                   color: Colors.purple,
                                   fontWeight: FontWeight.bold),
                             );
                           } else {
-                            return Text("Loading data, please wait");
+                            return const Text("Loading data, please wait");
                           }
                         },
                       ),
                     ),
                   ),
-                  // child: Card(
-                  //   elevation: 2.0,
-                  //   // color: Colors.white,
-                  //   child: Padding(
-                  //     padding: const EdgeInsets.all(8.0),
-                  //     child: Column(
-                  //       crossAxisAlignment: CrossAxisAlignment.start,
-                  //       children: const [
-                  //         Center(
-                  //           child: Text(
-                  //             "Details",
-                  //             style: TextStyle(
-                  //                 fontSize: 18.0,
-                  //                 color: Colors.purple,
-                  //                 fontWeight: FontWeight.bold),
-                  //           ),
-                  //         ),
-                  //         SizedBox(
-                  //           height: 10.0,
-                  //         ),
-                  //         Text("Full Name:"),
-                  //       ],
-                  //     ),
-                  //   ),
-                  //   shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(25.0)),
-                  // ),
                 ),
                 /////////////////////////////////////////////////////////////////////////
                 /////////////////////////////////////////////////////////////////////////
@@ -186,88 +154,6 @@ class _UserProfileState extends State<UserProfile> {
     );
   }
 
-  // Widget _getDataFromFirestore(BuildContext context) {
-  //   CollectionReference users = FirebaseFirestore.instance.collection('users');
-  //   String uid = "";
-  //   return StreamBuilder(
-  //     stream: users.doc(uid).snapshots(),
-  //     builder: (context, snapshot) {
-  //       if (!snapshot.hasData) {
-  //         return const Center(
-  //           child: Text(
-  //             "Loading...",
-  //             style: TextStyle(
-  //                 fontSize: 24.0,
-  //                 fontWeight: FontWeight.bold,
-  //                 color: Colors.black),
-  //           ),
-  //         );
-  //       }
-  //
-  //       return SingleChildScrollView(
-  //         child: Padding(
-  //           padding: const EdgeInsets.all(10.0),
-  //           child: Container(
-  //               width: MediaQuery.of(context).size.width,
-  //               child: Form(
-  //                 key: _formKey,
-  //                 child: Column(
-  //                   children: <Widget>[
-  //                     TextFormField(
-  //                       textCapitalization: TextCapitalization.words,
-  //                       controller: fullName,
-  //                       onChanged: (value) {
-  //                         setState(() {
-  //                           if (value.isNotEmpty) fullName.text = value;
-  //                         });
-  //                       },
-  //                     ),
-  //                     TextFormField(
-  //                       textCapitalization: TextCapitalization.words,
-  //                       controller: email,
-  //                       onChanged: (value) {
-  //                         setState(() {
-  //                           if (value.isNotEmpty) email.text = value;
-  //                         });
-  //                       },
-  //                       decoration: const InputDecoration(
-  //                         label: Text("Email"),
-  //                         //hintText: snapshot.data.['email'],
-  //                       ),
-  //                     ),
-  //                     TextFormField(
-  //                       keyboardType: TextInputType.number,
-  //                       textCapitalization: TextCapitalization.words,
-  //                       controller: phoneNumber,
-  //                       onChanged: (value) {
-  //                         setState(() {
-  //                           if (value.isNotEmpty) phoneNumber.text = value;
-  //                         });
-  //                       },
-  //                       decoration: const InputDecoration(
-  //                         label: Text("Phone Number"),
-  //                         // hintText: snapshot.data['phoneNumber'],
-  //                       ),
-  //                     ),
-  //                     const Align(
-  //                       alignment: Alignment.centerLeft,
-  //                       child: Text(
-  //                         "Address",
-  //                         style: TextStyle(
-  //                             color: Colors.black,
-  //                             fontFamily: 'Mplus',
-  //                             fontWeight: FontWeight.bold),
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               )),
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
-
   Future<void> logout(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
     Navigator.of(context).pushReplacement(
@@ -287,6 +173,6 @@ class _UserProfileState extends State<UserProfile> {
     }
   }
 
-  ///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
 
 }

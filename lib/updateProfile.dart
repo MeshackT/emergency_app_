@@ -10,6 +10,7 @@ import 'models/UserModel.dart';
 
 class UpdateProfile extends StatefulWidget {
   static const routeName = '/updateProfile';
+
   const UpdateProfile({Key? key}) : super(key: key);
 
   @override

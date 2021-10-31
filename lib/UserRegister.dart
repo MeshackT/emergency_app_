@@ -25,10 +25,10 @@ class _UserRegisterState extends State<UserRegister> {
   final TextEditingController fullName = TextEditingController();
   final TextEditingController phoneNumber = TextEditingController();
   final TextEditingController address = TextEditingController();
-
   final _auth = FirebaseAuth.instance;
 
   bool progressBar = false;
+  bool passwordVisible = true;
 
   bool validationAndSave() {
     final form = _formKey.currentState;
@@ -39,7 +39,39 @@ class _UserRegisterState extends State<UserRegister> {
     return true;
   }
 
-  bool passwordVisible = true;
+  // late Position _currentPosition;
+  // late String _currentAddress;
+  //
+  // final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+  // _getCurrentLocation() {
+  //   geolocator
+  //       .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+  //       .then((Position position) {
+  //     setState(() {
+  //       _currentPosition = position;
+  //     });
+  //
+  //     _getAddressFromLatLng();
+  //   }).catchError((e) {
+  //     print(e);
+  //   });
+  // }
+  //
+  // _getAddressFromLatLng() async {
+  //   try {
+  //     List<Placemark> p = await geolocator.placemarkFromCoordinates(
+  //         _currentPosition.latitude, _currentPosition.longitude);
+  //
+  //     Placemark place = p[0];
+  //
+  //     setState(() {
+  //       _currentAddress =
+  //           "${place.locality}, ${place.postalCode}, ${place.country}";
+  //     });
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -273,14 +305,13 @@ class _UserRegisterState extends State<UserRegister> {
                                   decoration: InputDecoration(
                                     label: const Text('Address'),
                                     hintText: 'Address',
+
                                     prefix: const Icon(
                                       Icons.my_location,
                                       color: Colors.grey,
                                     ),
                                     suffix: IconButton(
-                                      onPressed: () {
-                                        _printMessage();
-                                      },
+                                      onPressed: () async {},
                                       icon: const Icon(Icons.my_location),
                                       color: Colors.green,
                                     ),
@@ -330,7 +361,7 @@ class _UserRegisterState extends State<UserRegister> {
                         ),
                       ),
                       onPressed: () {
-                        validationAndSave;
+                        // validationAndSave;
                         registerUsers(email.text, password.text);
                       },
                       child: const Text(
@@ -428,9 +459,5 @@ class _UserRegisterState extends State<UserRegister> {
     Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (context) => const EmergencyType()),
         result: (route) => false);
-  }
-
-  _printMessage() {
-    print("location clicked");
   }
 }

@@ -100,6 +100,10 @@ class _EmergencyTypeState extends State<EmergencyType> {
         title: const Text("Emergency"),
         centerTitle: true,
         elevation: 0.0,
+        leading: const Icon(
+          Icons.arrow_back,
+          color: Colors.green,
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.person),

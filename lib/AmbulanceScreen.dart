@@ -31,7 +31,7 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.only(left: 20, right: 20),
+          padding: const EdgeInsets.only(left: 30, right: 30),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -72,7 +72,7 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                             ),
                           );
                         } else {
-                          return Text("Loading data, please wait");
+                          return const Text("Loading data, please wait");
                         }
                       },
                     ),

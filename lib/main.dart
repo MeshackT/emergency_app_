@@ -12,6 +12,7 @@ import 'package:afpemergencyapplication/UserRegister.dart';
 import 'package:afpemergencyapplication/updateProfile.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 Future main() async {
@@ -74,7 +75,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    late StreamSubscription<User?> user;
+    // late StreamSubscription<User?> user;
 
     // Timer(const Duration(seconds: 3), () {
     //   Navigator.of(context)
@@ -82,13 +83,17 @@ class _SplashScreenState extends State<SplashScreen> {
     // });
     user = FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user == null) {
-        print('User is currently signed out! then go to splash screen');
+        if (kDebugMode) {
+          print('User is currently signed out! then go to splash screen');
+        }
         Timer(const Duration(seconds: 3), () {
           Navigator.of(context).pushReplacement(
               MaterialPageRoute(builder: (_) => const LogIn()));
         });
       } else {
-        print('User is signed in!');
+        if (kDebugMode) {
+          print('User is signed in!');
+        }
       }
     });
   }

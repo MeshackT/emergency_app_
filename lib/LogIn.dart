@@ -8,6 +8,7 @@ import 'UserRegister.dart';
 
 class LogIn extends StatefulWidget {
   static const routeName = '/login';
+
   const LogIn({Key? key}) : super(key: key);
 
   @override
@@ -16,10 +17,11 @@ class LogIn extends StatefulWidget {
 
 class _LogInState extends State<LogIn> {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  // final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   bool progressBar = false;
   bool passwordVisible = true;
+
   bool validationAndSave() {
     final form = _formKey.currentState;
     if (form!.validate()) {
@@ -162,7 +164,7 @@ class _LogInState extends State<LogIn> {
                                         Icons.visibility,
                                         color: Colors.grey,
                                       )),
-                                  contentPadding: EdgeInsets.symmetric(
+                                  contentPadding: const EdgeInsets.symmetric(
                                       vertical: 10.0, horizontal: 20.0),
                                 ),
                               ),
@@ -313,7 +315,9 @@ class _LogInState extends State<LogIn> {
           progressBar = false;
         });
       } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
+        if (kDebugMode) {
+          print('Wrong password provided for that user.');
+        }
         Fluttertoast.showToast(
             msg: 'Wrong password provided for that user.',
             toastLength: Toast.LENGTH_SHORT,
@@ -328,7 +332,7 @@ class _LogInState extends State<LogIn> {
     }
   }
 
-  // Stream<String> get onAuthStateChanged => _firebaseAuth.onAuthStateChanged.map(
-  //       (User? user) => user?.uid,
-  //     );
+// Stream<String> get onAuthStateChanged => _firebaseAuth.onAuthStateChanged.map(
+//       (User? user) => user?.uid,
+//     );
 }

@@ -10,6 +10,8 @@ class ThreeButtonsScreen extends StatefulWidget {
 }
 
 class _ThreeButtonsScreenState extends State<ThreeButtonsScreen> {
+  String name = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

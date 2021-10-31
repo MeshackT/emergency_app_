@@ -17,7 +17,7 @@ class UserModel {
   @override
   String toString() {
     return 'Details\n\nemail: $email\nphoneNumber: $phoneNumber\n'
-        'password: $password\nfullName: $fullName\n\naddress: $address';
+        '\nfullName: $fullName\n\naddress: $address';
   }
 
   //getting data from the server
@@ -27,6 +27,7 @@ class UserModel {
       email: map['email'],
       phoneNumber: map['phoneNumber'],
       fullName: map['fullName'],
+      // password: map['password'],
       address: map['address'],
     );
   }
