@@ -19,6 +19,7 @@ class _ThreeButtonsScreenState extends State<ThreeButtonsScreen> {
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               //////////////////////Ambulance/////////////////////////////////////
               Padding(

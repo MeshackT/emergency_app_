@@ -75,12 +75,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // late StreamSubscription<User?> user;
 
-    // Timer(const Duration(seconds: 3), () {
-    //   Navigator.of(context)
-    //       .pushReplacement(MaterialPageRoute(builder: (_) => const LogIn()));
-    // });
     user = FirebaseAuth.instance.authStateChanges().listen((user) {
       if (user == null) {
         if (kDebugMode) {

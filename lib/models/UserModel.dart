@@ -6,6 +6,8 @@ class UserModel {
   String? fullName;
   String? address;
 
+  UserModel.name(this.email, this.phoneNumber, this.fullName, this.address);
+
   UserModel(
       {this.uid,
       this.email,
@@ -31,6 +33,8 @@ class UserModel {
       address: map['address'],
     );
   }
+
+  // Map<String, dynamic> userModel = {};
 
   //sending data to the server
   Map<String, dynamic> toMap() {

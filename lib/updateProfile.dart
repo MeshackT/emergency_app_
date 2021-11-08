@@ -2,6 +2,7 @@ import 'package:afpemergencyapplication/LogIn.dart';
 import 'package:afpemergencyapplication/UserProfile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -21,36 +22,20 @@ class _UpdateProfileState extends State<UpdateProfile> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   UserModel userModel = UserModel();
 
-  bool showProgressBar = false;
-  bool progressBar = false;
-
   User? user = FirebaseAuth.instance.currentUser;
-  final _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   String uid = "";
-  final TextEditingController email = TextEditingController();
-  final TextEditingController fullName = TextEditingController();
-  final TextEditingController phoneNumber = TextEditingController();
-  final TextEditingController address = TextEditingController();
+  TextEditingController email = TextEditingController();
+  TextEditingController fullName = TextEditingController();
+  TextEditingController phoneNumber = TextEditingController();
+  TextEditingController address = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _fetch(context);
-
-    setState(() {
-      user = _auth.currentUser;
-      if (user != null) {
-        FirebaseFirestore.instance
-            .collection('users')
-            .doc(userModel.uid)
-            .get()
-            .then((value) => userModel = UserModel.fromMap(value.data()));
-      }
-      if (kDebugMode) {
-        print(userModel.email);
-      }
-    });
+    // _uploadUserData();
+    _getUserData();
   }
 
   @override
@@ -77,11 +62,11 @@ class _UpdateProfileState extends State<UpdateProfile> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(
-                    height: 40.0,
+                    height: 25.0,
                   ),
 
                   Container(
-                    height: 70,
+                    height: 60,
                     margin: const EdgeInsets.only(
                       bottom: 7,
                     ),
@@ -99,7 +84,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     color: Colors.green[100],
                   ),
                   Container(
-                    margin: const EdgeInsets.only(bottom: 20, top: 20),
+                    margin: const EdgeInsets.only(bottom: 10, top: 10),
                     child: const Center(
                       child: Text(
                         "Details Update",
@@ -111,7 +96,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     ),
                   ),
                   const SizedBox(
-                    height: 20.0,
+                    height: 10.0,
                   ),
                   Card(
                     color: Colors.white,
@@ -126,24 +111,22 @@ class _UpdateProfileState extends State<UpdateProfile> {
                             children: [
                               Container(
                                 margin:
-                                    const EdgeInsets.only(bottom: 10, top: 20),
+                                    const EdgeInsets.only(bottom: 10, top: 10),
                                 child: TextFormField(
                                   controller: email,
                                   onSaved: (value) {
                                     setState(() {
                                       email.text = value!;
-                                      // if (kDebugMode) {
-                                      //   print("email: $_email");
-                                      // }
+                                      if (kDebugMode) {
+                                        print("email: $email");
+                                      }
                                     });
                                   },
                                   validator: (value) {
                                     if (value!.isEmpty) {
                                       return ("Enter email");
                                     }
-                                    if (!RegExp(
-                                            "^[a-zA-Z0-9+_.-]+.[a-zA-Z0-9>-]+.[a-z]")
-                                        .hasMatch(value)) {
+                                    if (!value.contains("@")) {
                                       return ("Please Enter a valid email");
                                     }
                                     return null;
@@ -152,8 +135,16 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                   style: const TextStyle(
                                       fontSize: 14.0, color: Colors.purple),
                                   decoration: const InputDecoration(
-                                    label: Text('Email'),
-                                    hintText: 'email',
+                                    prefix: Icon(
+                                      Icons.email,
+                                      color: Colors.grey,
+                                    ),
+                                    label: Text(
+                                      'Email',
+                                      style: TextStyle(
+                                          fontSize: 14.0, color: Colors.purple),
+                                    ),
+                                    hintText: 'email@gmail.com',
                                     contentPadding: EdgeInsets.symmetric(
                                         vertical: 10.0, horizontal: 20.0),
                                   ),
@@ -176,8 +167,16 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                   style: const TextStyle(
                                       fontSize: 14.0, color: Colors.purple),
                                   decoration: const InputDecoration(
-                                    label: Text('Full Names'),
+                                    label: Text(
+                                      'Full Names',
+                                      style: TextStyle(
+                                          fontSize: 14.0, color: Colors.purple),
+                                    ),
                                     hintText: 'Full Names',
+                                    prefix: Icon(
+                                      Icons.person,
+                                      color: Colors.grey,
+                                    ),
                                     contentPadding: EdgeInsets.symmetric(
                                         vertical: 10.0, horizontal: 20.0),
                                   ),
@@ -188,7 +187,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                   bottom: 10,
                                 ),
                                 child: TextFormField(
-                                  // controller: phoneNumber,
+                                  controller: phoneNumber,
                                   onSaved: (value) {
                                     setState(() {
                                       phoneNumber.text = value!;
@@ -196,19 +195,28 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                   },
                                   validator: (value) {
                                     if (value!.isEmpty) {
-                                      return ("10 digit number required");
+                                      return ("10 digit number is required");
                                     }
-                                    if (value.length < 10 &&
-                                        value.length > 10) {
+                                    if (value.length < 10) {
                                       return ("Enter a valid phone number with 10 digits");
+                                    } else if (value.length > 10) {
+                                      return ("Too many digits entered");
                                     }
                                   },
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
                                       fontSize: 14.0, color: Colors.purple),
                                   decoration: const InputDecoration(
-                                    label: Text('Phone Number'),
-                                    hintText: 'Phone Number.',
+                                    label: Text(
+                                      'Phone Number',
+                                      style: TextStyle(
+                                          fontSize: 14.0, color: Colors.purple),
+                                    ),
+                                    hintText: 'Phone Number',
+                                    prefix: Icon(
+                                      Icons.phone,
+                                      color: Colors.grey,
+                                    ),
                                     contentPadding: EdgeInsets.symmetric(
                                         vertical: 10.0, horizontal: 20.0),
                                   ),
@@ -230,22 +238,22 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
                                       fontSize: 14.0, color: Colors.purple),
-                                  decoration: const InputDecoration(
-                                      label: Text('Address'),
-                                      hintText: 'Address',
-                                      contentPadding: EdgeInsets.symmetric(
-                                          vertical: 10.0, horizontal: 20.0),
-                                      icon: IconButton(
-                                          onPressed: null,
-                                          icon: Icon(
-                                            Icons.my_location,
-                                            size: 30.0,
-                                            color: Colors.green,
-                                          ))),
+                                  decoration: InputDecoration(
+                                    label: const Text('Address'),
+                                    hintText: 'Address',
+                                    // prefix: const Icon(
+                                    //   Icons.my_location,
+                                    //   color: Colors.grey,
+                                    // ),
+                                    suffix: IconButton(
+                                      onPressed: () async {},
+                                      icon: const Icon(Icons.my_location),
+                                      color: Colors.green,
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 20.0),
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(
-                                height: 20.0,
                               ),
                             ],
                           ),
@@ -321,39 +329,61 @@ class _UpdateProfileState extends State<UpdateProfile> {
     setState(() {});
   }
 
-  Future<void> _fetch(BuildContext context) async {
-    user = _auth.currentUser;
-    if (user != null) {
-      FirebaseFirestore.instance
-          .collection('users')
-          .doc(userModel.uid)
-          .get()
-          .then((value) => userModel = UserModel.fromMap(value.data()));
-    }
-  }
-
-  Future<void> _uploadUserData() async {
+  ///////////////////////////////////////////
+  //            fetch user data            //
+  //////////////////////////////////////////
+  Future<void> _getUserData() async {
+    //instantiate the classes
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    final _auth = FirebaseAuth.instance;
     User? user = _auth.currentUser;
 
-    UserModel userModel = UserModel();
+    await firebaseFirestore
+        .collection('users')
+        // .document((await FirebaseAuth.instance.currentUser()).uid)
+        .doc(user!.uid)
+        .get()
+        .then((value) {
+      setState(() {
+        fullName.text = value.data()!['fullName'].toString();
+        email.text = value.data()!['email'].toString();
+        phoneNumber.text = value.data()!['phoneNumber'].toString();
+        address.text = value.data()!['address'].toString();
+      });
+    });
+  }
+
+  ///////////////////////////////////////////
+  //           upload user data           //
+  //////////////////////////////////////////
+  Future<void> _uploadUserData() async {
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    final _auth = FirebaseAuth.instance;
+    User? user = _auth.currentUser;
+
+    // CollectionReference users = FirebaseFirestore.instance.collection('users');
 
     try {
       //writing to firebase
       //adding the details to the constructor
-      await firebaseFirestore
-          .collection("users")
-          .doc(user?.uid)
-          .update(userModel.toMap()); //writing to firebase
-      //adding the details to the constructor
-      userModel.uid = user?.uid;
-      userModel.email = email.text;
-      userModel.fullName = fullName.text;
-      userModel.phoneNumber = phoneNumber.text;
-      userModel.address = address.text;
+      await firebaseFirestore.collection("users").doc(user?.uid).update({
+        'fullName': fullName.text,
+        'email': email.text,
+        'phoneNumber': phoneNumber.text,
+        'address': address.text
+      }).whenComplete(
+        () => Fluttertoast.showToast(
+            msg: 'Update Complete',
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 16),
+      ); //writing to firebase
     } catch (e) {
       setState(() {
-        progressBar = false;
+        const CircularProgressIndicator(
+          backgroundColor: Colors.red,
+        );
       });
       Fluttertoast.showToast(
           msg: '$e',

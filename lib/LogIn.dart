@@ -17,7 +17,6 @@ class LogIn extends StatefulWidget {
 
 class _LogInState extends State<LogIn> {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  // final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   bool progressBar = false;
   bool passwordVisible = true;
@@ -288,8 +287,10 @@ class _LogInState extends State<LogIn> {
   }
 
   Future<User?> _userSignIn(String email, String password) async {
+    final _auth = FirebaseAuth.instance;
+
     try {
-      await FirebaseAuth.instance
+      await _auth
           .signInWithEmailAndPassword(
               email: email.trim().toLowerCase(), password: password.trim())
           .then((uid) => {
@@ -331,8 +332,4 @@ class _LogInState extends State<LogIn> {
       }
     }
   }
-
-// Stream<String> get onAuthStateChanged => _firebaseAuth.onAuthStateChanged.map(
-//       (User? user) => user?.uid,
-//     );
 }

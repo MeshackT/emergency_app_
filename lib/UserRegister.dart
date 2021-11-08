@@ -9,9 +9,8 @@ import 'HomeScreen.dart';
 import 'models/UserModel.dart';
 
 class UserRegister extends StatefulWidget {
-  static const routeName = '/registerUser';
-
   const UserRegister({Key? key}) : super(key: key);
+  static const routeName = '/registerUser';
 
   @override
   State<UserRegister> createState() => _UserRegisterState();
@@ -25,7 +24,6 @@ class _UserRegisterState extends State<UserRegister> {
   final TextEditingController fullName = TextEditingController();
   final TextEditingController phoneNumber = TextEditingController();
   final TextEditingController address = TextEditingController();
-  final _auth = FirebaseAuth.instance;
 
   bool progressBar = false;
   bool passwordVisible = true;
@@ -38,40 +36,6 @@ class _UserRegisterState extends State<UserRegister> {
     }
     return true;
   }
-
-  // late Position _currentPosition;
-  // late String _currentAddress;
-  //
-  // final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
-  // _getCurrentLocation() {
-  //   geolocator
-  //       .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-  //       .then((Position position) {
-  //     setState(() {
-  //       _currentPosition = position;
-  //     });
-  //
-  //     _getAddressFromLatLng();
-  //   }).catchError((e) {
-  //     print(e);
-  //   });
-  // }
-  //
-  // _getAddressFromLatLng() async {
-  //   try {
-  //     List<Placemark> p = await geolocator.placemarkFromCoordinates(
-  //         _currentPosition.latitude, _currentPosition.longitude);
-  //
-  //     Placemark place = p[0];
-  //
-  //     setState(() {
-  //       _currentAddress =
-  //           "${place.locality}, ${place.postalCode}, ${place.country}";
-  //     });
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -305,11 +269,10 @@ class _UserRegisterState extends State<UserRegister> {
                                   decoration: InputDecoration(
                                     label: const Text('Address'),
                                     hintText: 'Address',
-
-                                    prefix: const Icon(
-                                      Icons.my_location,
-                                      color: Colors.grey,
-                                    ),
+                                    // prefix: const Icon(
+                                    //   Icons.my_location,
+                                    //   color: Colors.grey,
+                                    // ),
                                     suffix: IconButton(
                                       onPressed: () async {},
                                       icon: const Icon(Icons.my_location),
@@ -317,14 +280,6 @@ class _UserRegisterState extends State<UserRegister> {
                                     ),
                                     contentPadding: const EdgeInsets.symmetric(
                                         vertical: 10.0, horizontal: 20.0),
-                                    // icon: IconButton(
-                                    //   onPressed: null,
-                                    //   icon: Icon(
-                                    //     Icons.my_location,
-                                    //     size: 30.0,
-                                    //     color: Colors.green,
-                                    //   ),
-                                    // ),
                                   ),
                                 ),
                               ),
@@ -424,6 +379,7 @@ class _UserRegisterState extends State<UserRegister> {
   }
 
   Future<void> registerUsers(String email, String password) async {
+    final _auth = FirebaseAuth.instance;
     if (_formKey.currentState!.validate()) {
       await _auth
           .createUserWithEmailAndPassword(email: email, password: password)
@@ -438,6 +394,8 @@ class _UserRegisterState extends State<UserRegister> {
 
   postDetailsToFirebase() async {
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    final _auth = FirebaseAuth.instance;
+
     User? user = _auth.currentUser;
 
     UserModel userModel = UserModel();
