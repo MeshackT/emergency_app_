@@ -33,11 +33,6 @@ class _UserProfileState extends State<UserProfile> {
   String fullName = "";
   String address = "";
 
-  // TextEditingController email = TextEditingController();
-  // final TextEditingController fullName = TextEditingController();
-  // final TextEditingController phoneNumber = TextEditingController();
-  // final TextEditingController address = TextEditingController();
-
   @override
   void initState() {
     super.initState();
@@ -142,21 +137,24 @@ class _UserProfileState extends State<UserProfile> {
                                         SizedBox(
                                           height: 5,
                                         ),
-                                        Text("Names :",
-                                            style:
-                                                TextStyle(color: Colors.grey)),
+                                        Text(
+                                          "Names :",
+                                          style: TextStyle(color: Colors.grey),
+                                        ),
                                         SizedBox(
                                           height: 5,
                                         ),
-                                        Text("Email :",
-                                            style:
-                                                TextStyle(color: Colors.grey)),
+                                        Text(
+                                          "Email :",
+                                          style: TextStyle(color: Colors.grey),
+                                        ),
                                         SizedBox(
                                           height: 5,
                                         ),
-                                        Text("Phone Number :",
-                                            style:
-                                                TextStyle(color: Colors.grey)),
+                                        Text(
+                                          "Phone Number :",
+                                          style: TextStyle(color: Colors.grey),
+                                        ),
                                         SizedBox(
                                           height: 5,
                                         ),

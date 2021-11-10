@@ -76,183 +76,178 @@ class _LogInState extends State<LogIn> {
                 ////////Card////////
                 Padding(
                   padding: const EdgeInsets.only(right: 10.0, left: 10.0),
-                  child: Expanded(
-                    child: Card(
-                      elevation: 2.0,
-                      shadowColor: Colors.green,
-                      color: Colors.white,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 10, right: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Container(
-                              margin:
-                                  const EdgeInsets.only(bottom: 20, top: 20),
-                              child: TextFormField(
-                                controller: email,
-                                onSaved: (value) {
-                                  setState(() {
-                                    email.text = value!;
-                                  });
-                                },
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return ("Enter an email");
-                                  }
-                                  if (!value.contains("@")) {
-                                    return ("Please Enter a valid valid email");
-                                  }
-                                  return null;
-                                },
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                    fontSize: 14.0, color: Colors.purple),
-                                decoration: const InputDecoration(
-                                  label: Text('Email'),
-                                  hintText: 'Email',
-                                  prefix: Icon(
-                                    Icons.email,
-                                    color: Colors.grey,
-                                  ),
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 10.0, horizontal: 20.0),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              margin: const EdgeInsets.only(
-                                bottom: 20,
-                              ),
-                              child: TextFormField(
-                                controller: password,
-                                onSaved: (value) {
-                                  setState(() {
-                                    password.text = value!;
-                                  });
-                                },
-                                validator: (value) {
-                                  RegExp regex = RegExp(r'^.{6,}$');
-                                  if (value!.isEmpty) {
-                                    return ("Enter password");
-                                  }
-                                  if (value.length < 5) {
-                                    return ("Your password is too short!");
-                                  }
-                                  if (!regex.hasMatch(value)) {
-                                    return ("password min of 6 characters");
-                                  }
-                                },
-                                textAlign: TextAlign.center,
-                                obscureText: passwordVisible,
-                                style: const TextStyle(
-                                    fontSize: 14.0, color: Colors.purple),
-                                decoration: InputDecoration(
-                                  label: const Text('Password'),
-                                  hintText: 'Enter Password.',
-                                  prefix: const Icon(
-                                    Icons.lock,
-                                    color: Colors.grey,
-                                  ),
-                                  suffix: IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          passwordVisible = !passwordVisible;
-                                        });
-                                      },
-                                      icon: const Icon(
-                                        Icons.visibility,
-                                        color: Colors.grey,
-                                      )),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 10.0, horizontal: 20.0),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 15.0,
-                            ),
-                            //////////////buttons///////////////
-                            SizedBox(
-                              height: 50,
-                              child: ElevatedButton(
-                                style: ButtonStyle(
-                                  backgroundColor:
-                                      MaterialStateProperty.all(Colors.green),
-                                  padding:
-                                      MaterialStateProperty.all<EdgeInsets>(
-                                          const EdgeInsets.all(15)),
-                                  // foregroundColor:
-                                  //     MaterialStateProperty.all<Color>(Colors.green),
-                                  shape: MaterialStateProperty.all<
-                                      RoundedRectangleBorder>(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(28.0),
-                                      side:
-                                          const BorderSide(color: Colors.green),
-                                    ),
-                                  ),
-                                ),
-                                onPressed: () async {
-                                  if (_formKey.currentState!.validate()) {
-                                    FocusScope.of(context).unfocus();
-
-                                    //get the user information
-                                    _userSignIn(email.text, password.text);
-
-                                    setState(() {
-                                      progressBar = true;
-                                    });
-                                  }
-                                },
-                                child: const Text(
-                                  "LogIn",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-
-                            TextButton(
-                              onPressed: () {
-                                if (kDebugMode) {
-                                  print('register clicked');
+                  child: Card(
+                    elevation: 2.0,
+                    shadowColor: Colors.green,
+                    color: Colors.white,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 10, right: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(bottom: 20, top: 20),
+                            child: TextFormField(
+                              controller: email,
+                              onSaved: (value) {
+                                setState(() {
+                                  email.text = value!;
+                                });
+                              },
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return ("Enter an email");
                                 }
-                                Navigator.of(context).pushReplacementNamed(
-                                    UserRegister.routeName);
+                                if (!value.contains("@")) {
+                                  return ("Please Enter a valid valid email");
+                                }
+                                return null;
+                              },
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                  fontSize: 14.0, color: Colors.purple),
+                              decoration: const InputDecoration(
+                                label: Text('Email'),
+                                hintText: 'Email',
+                                prefix: Icon(
+                                  Icons.email,
+                                  color: Colors.grey,
+                                ),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 10.0, horizontal: 20.0),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(
+                              bottom: 20,
+                            ),
+                            child: TextFormField(
+                              controller: password,
+                              onSaved: (value) {
+                                setState(() {
+                                  password.text = value!;
+                                });
+                              },
+                              validator: (value) {
+                                RegExp regex = RegExp(r'^.{6,}$');
+                                if (value!.isEmpty) {
+                                  return ("Enter password");
+                                }
+                                if (value.length < 5) {
+                                  return ("Your password is too short!");
+                                }
+                                if (!regex.hasMatch(value)) {
+                                  return ("password min of 6 characters");
+                                }
+                              },
+                              textAlign: TextAlign.center,
+                              obscureText: passwordVisible,
+                              style: const TextStyle(
+                                  fontSize: 14.0, color: Colors.purple),
+                              decoration: InputDecoration(
+                                label: const Text('Password'),
+                                hintText: 'Enter Password.',
+                                prefix: const Icon(
+                                  Icons.lock,
+                                  color: Colors.grey,
+                                ),
+                                suffix: IconButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        passwordVisible = !passwordVisible;
+                                      });
+                                    },
+                                    icon: const Icon(
+                                      Icons.visibility,
+                                      color: Colors.grey,
+                                    )),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 10.0, horizontal: 20.0),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 15.0,
+                          ),
+                          //////////////buttons///////////////
+                          SizedBox(
+                            height: 50,
+                            child: ElevatedButton(
+                              style: ButtonStyle(
+                                backgroundColor:
+                                    MaterialStateProperty.all(Colors.green),
+                                padding: MaterialStateProperty.all<EdgeInsets>(
+                                    const EdgeInsets.all(15)),
+                                // foregroundColor:
+                                //     MaterialStateProperty.all<Color>(Colors.green),
+                                shape: MaterialStateProperty.all<
+                                    RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(28.0),
+                                    side: const BorderSide(color: Colors.green),
+                                  ),
+                                ),
+                              ),
+                              onPressed: () async {
+                                if (_formKey.currentState!.validate()) {
+                                  FocusScope.of(context).unfocus();
+
+                                  //get the user information
+                                  _userSignIn(email.text, password.text);
+
+                                  setState(() {
+                                    progressBar = true;
+                                  });
+                                }
                               },
                               child: const Text(
-                                "Register",
+                                "LogIn",
                                 style: TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.green),
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold),
                               ),
                             ),
-                            const Padding(
-                              padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
-                              child: Divider(
-                                height: 4.0,
-                                color: Colors.grey,
-                              ),
+                          ),
+
+                          TextButton(
+                            onPressed: () {
+                              if (kDebugMode) {
+                                print('register clicked');
+                              }
+                              Navigator.of(context)
+                                  .pushReplacementNamed(UserRegister.routeName);
+                            },
+                            child: const Text(
+                              "Register",
+                              style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green),
                             ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pushReplacementNamed(
-                                    context, PasswordReset.routeName);
-                              },
-                              child: const Text(
-                                "Forgot password?",
-                                style: TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.green),
-                              ),
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
+                            child: Divider(
+                              height: 4.0,
+                              color: Colors.grey,
                             ),
-                          ],
-                        ),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pushReplacementNamed(
+                                  context, PasswordReset.routeName);
+                            },
+                            child: const Text(
+                              "Forgot password?",
+                              style: TextStyle(
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

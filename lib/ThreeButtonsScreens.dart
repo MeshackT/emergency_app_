@@ -1,4 +1,4 @@
-import 'package:afpemergencyapplication/CallForHelp.dart';
+import 'package:afpemergencyapplication/CallerClass/DirectCallerClass.dart';
 import 'package:flutter/material.dart';
 
 class ThreeButtonsScreen extends StatefulWidget {
@@ -11,6 +11,8 @@ class ThreeButtonsScreen extends StatefulWidget {
 
 class _ThreeButtonsScreenState extends State<ThreeButtonsScreen> {
   String name = "";
+
+  DirectCallerClass directCallerClass = DirectCallerClass();
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +31,9 @@ class _ThreeButtonsScreenState extends State<ThreeButtonsScreen> {
                   width: 100,
                   child: InkWell(
                     onTap: () {
-                      Navigator.pushReplacementNamed(
-                          context, CallForHelp.routeName);
+                      // Navigator.pushReplacementNamed(
+                      //     context, CallForHelp.routeName);
+                      directCallerClass.callAmbulanceNumber();
                     },
                     child: const IconButton(
                       onPressed: null,
@@ -52,8 +55,9 @@ class _ThreeButtonsScreenState extends State<ThreeButtonsScreen> {
                   width: 100,
                   child: InkWell(
                     onTap: () {
-                      Navigator.pushReplacementNamed(
-                          context, CallForHelp.routeName);
+                      // Navigator.pushReplacementNamed(
+                      //     context, CallForHelp.routeName);
+                      directCallerClass.callFireFighterNumber();
                     },
                     child: const IconButton(
                       onPressed: null,
@@ -75,8 +79,9 @@ class _ThreeButtonsScreenState extends State<ThreeButtonsScreen> {
                   width: 100,
                   child: InkWell(
                     onTap: () {
-                      Navigator.pushReplacementNamed(
-                          context, CallForHelp.routeName);
+                      // Navigator.pushReplacementNamed(
+                      //     context, CallForHelp.routeName);
+                      directCallerClass.callPoliceNumber();
                     },
                     child: const IconButton(
                       onPressed: null,

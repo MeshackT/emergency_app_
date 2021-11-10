@@ -2,7 +2,7 @@
     package="com.example.afpemergencyapplication">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <application
         android:icon="@mipmap/ic_launcher"
         android:label="afpemergencyapplication">

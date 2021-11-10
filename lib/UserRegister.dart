@@ -1,9 +1,11 @@
+import 'package:afpemergencyapplication/GetLocation.dart';
 import 'package:afpemergencyapplication/LogIn.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:logger/logger.dart';
 
 import 'HomeScreen.dart';
 import 'models/UserModel.dart';
@@ -18,6 +20,8 @@ class UserRegister extends StatefulWidget {
 
 class _UserRegisterState extends State<UserRegister> {
   final _formKey = GlobalKey<FormState>();
+  Logger log = Logger(printer: PrettyPrinter(colors: true));
+  GetLocation getLocation = GetLocation();
 
   final TextEditingController email = TextEditingController();
   final TextEditingController password = TextEditingController();
@@ -85,209 +89,216 @@ class _UserRegisterState extends State<UserRegister> {
                       margin: const EdgeInsets.only(left: 10.0, right: 10.0),
                       child: Form(
                         key: _formKey,
-                        child: Expanded(
-                          child: Column(
-                            children: [
-                              Container(
-                                margin:
-                                    const EdgeInsets.only(bottom: 10, top: 10),
-                                child: TextFormField(
-                                  controller: email,
-                                  onSaved: (value) {
-                                    setState(() {
-                                      email.text = value!;
-                                      if (kDebugMode) {
-                                        print("email: $email");
-                                      }
-                                    });
-                                  },
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return ("Enter email");
+                        child: Column(
+                          children: [
+                            Container(
+                              margin:
+                                  const EdgeInsets.only(bottom: 10, top: 10),
+                              child: TextFormField(
+                                controller: email,
+                                onSaved: (value) {
+                                  setState(() {
+                                    email.text = value!;
+                                    if (kDebugMode) {
+                                      print("email: $email");
                                     }
-                                    if (!value.contains("@")) {
-                                      return ("Please Enter a valid email");
-                                    }
-                                    return null;
-                                  },
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                      fontSize: 14.0, color: Colors.purple),
-                                  decoration: const InputDecoration(
-                                    prefix: Icon(
-                                      Icons.email,
-                                      color: Colors.grey,
-                                    ),
-                                    label: Text(
-                                      'Email',
-                                      style: TextStyle(
-                                          fontSize: 14.0, color: Colors.purple),
-                                    ),
-                                    hintText: 'email',
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 20.0),
+                                  });
+                                },
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return ("Enter email");
+                                  }
+                                  if (!value.contains("@")) {
+                                    return ("Please Enter a valid email");
+                                  }
+                                  return null;
+                                },
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                    fontSize: 14.0, color: Colors.purple),
+                                decoration: const InputDecoration(
+                                  prefix: Icon(
+                                    Icons.email,
+                                    color: Colors.grey,
                                   ),
+                                  label: Text(
+                                    'Email',
+                                    style: TextStyle(
+                                        fontSize: 14.0, color: Colors.purple),
+                                  ),
+                                  hintText: 'email',
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 10.0, horizontal: 20.0),
                                 ),
                               ),
-                              Container(
-                                margin: const EdgeInsets.only(
-                                  bottom: 10,
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(
+                                bottom: 10,
+                              ),
+                              child: TextFormField(
+                                obscureText: passwordVisible,
+                                controller: password,
+                                onSaved: (value) {
+                                  setState(() {
+                                    password.text = value!;
+                                  });
+                                },
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return ("Enter a password");
+                                  }
+                                  if (value.length < 5) {
+                                    return ("Your password is too short!(Length 7 minimum)");
+                                  }
+                                },
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                    fontSize: 14.0, color: Colors.purple),
+                                decoration: InputDecoration(
+                                  label: const Text(
+                                    'Password',
+                                    style: TextStyle(
+                                        fontSize: 14.0, color: Colors.purple),
+                                  ),
+                                  hintText: 'Password.',
+                                  prefix: const Icon(
+                                    Icons.lock,
+                                    color: Colors.grey,
+                                  ),
+                                  suffix: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          passwordVisible = !passwordVisible;
+                                        });
+                                      },
+                                      icon: const Icon(
+                                        Icons.visibility,
+                                        color: Colors.grey,
+                                      )),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 10.0, horizontal: 20.0),
                                 ),
-                                child: TextFormField(
-                                  obscureText: passwordVisible,
-                                  controller: password,
-                                  onSaved: (value) {
-                                    setState(() {
-                                      password.text = value!;
-                                    });
-                                  },
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return ("Enter a password");
-                                    }
-                                    if (value.length < 5) {
-                                      return ("Your password is too short!(Length 7 minimum)");
-                                    }
-                                  },
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                      fontSize: 14.0, color: Colors.purple),
-                                  decoration: InputDecoration(
-                                    label: const Text(
-                                      'Password',
-                                      style: TextStyle(
-                                          fontSize: 14.0, color: Colors.purple),
-                                    ),
-                                    hintText: 'Password.',
-                                    prefix: const Icon(
-                                      Icons.lock,
-                                      color: Colors.grey,
-                                    ),
-                                    suffix: IconButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            passwordVisible = !passwordVisible;
-                                          });
+                              ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(
+                                bottom: 10,
+                              ),
+                              child: TextFormField(
+                                // obscureText: true,
+                                controller: fullName,
+                                onSaved: (value) {
+                                  //Do something with the user input.
+                                  setState(() {
+                                    fullName.text = value!;
+                                  });
+                                },
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                    fontSize: 14.0, color: Colors.purple),
+                                decoration: const InputDecoration(
+                                  label: Text(
+                                    'Full Names',
+                                    style: TextStyle(
+                                        fontSize: 14.0, color: Colors.purple),
+                                  ),
+                                  hintText: 'Full Names',
+                                  prefix: Icon(
+                                    Icons.person,
+                                    color: Colors.grey,
+                                  ),
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 10.0, horizontal: 20.0),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(
+                                bottom: 10,
+                              ),
+                              child: TextFormField(
+                                controller: phoneNumber,
+                                onSaved: (value) {
+                                  setState(() {
+                                    phoneNumber.text = value!;
+                                  });
+                                },
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return ("10 digit number is required");
+                                  }
+                                  if (value.length < 10) {
+                                    return ("Enter a valid phone number with 10 digits");
+                                  } else if (value.length > 10) {
+                                    return ("Too many digits entered");
+                                  }
+                                },
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                    fontSize: 14.0, color: Colors.purple),
+                                decoration: const InputDecoration(
+                                  label: Text(
+                                    'Phone Number',
+                                    style: TextStyle(
+                                        fontSize: 14.0, color: Colors.purple),
+                                  ),
+                                  hintText: 'Phone Number',
+                                  prefix: Icon(
+                                    Icons.phone,
+                                    color: Colors.grey,
+                                  ),
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 10.0, horizontal: 20.0),
+                                ),
+                              ),
+                            ),
+                            Container(
+                              margin: const EdgeInsets.only(
+                                bottom: 10,
+                              ),
+                              child: TextFormField(
+                                // obscureText: true,
+                                controller: address,
+                                onSaved: (value) {
+                                  //Do something with the user input.
+                                  setState(() {
+                                    address.text = value!;
+                                  });
+                                },
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                    fontSize: 14.0, color: Colors.purple),
+                                decoration: InputDecoration(
+                                  label: const Text('Address'),
+                                  hintText: 'Address',
+                                  // prefix: const Icon(
+                                  //   Icons.my_location,
+                                  //   color: Colors.grey,
+                                  // ),
+                                  suffix: IconButton(
+                                    onPressed: () async {
+                                      getLocation.currentPosition;
+                                      log.i(getLocation.currentPosition);
+                                      setState(
+                                        () {
+                                          address.text =
+                                              getLocation.currentAddress!;
                                         },
-                                        icon: const Icon(
-                                          Icons.visibility,
-                                          color: Colors.grey,
-                                        )),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 20.0),
+                                      );
+                                    },
+                                    icon: const Icon(Icons.my_location),
+                                    color: Colors.green,
                                   ),
+                                  contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 10.0, horizontal: 20.0),
                                 ),
                               ),
-                              Container(
-                                margin: const EdgeInsets.only(
-                                  bottom: 10,
-                                ),
-                                child: TextFormField(
-                                  // obscureText: true,
-                                  controller: fullName,
-                                  onSaved: (value) {
-                                    //Do something with the user input.
-                                    setState(() {
-                                      fullName.text = value!;
-                                    });
-                                  },
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                      fontSize: 14.0, color: Colors.purple),
-                                  decoration: const InputDecoration(
-                                    label: Text(
-                                      'Full Names',
-                                      style: TextStyle(
-                                          fontSize: 14.0, color: Colors.purple),
-                                    ),
-                                    hintText: 'Full Names',
-                                    prefix: Icon(
-                                      Icons.person,
-                                      color: Colors.grey,
-                                    ),
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 20.0),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.only(
-                                  bottom: 10,
-                                ),
-                                child: TextFormField(
-                                  controller: phoneNumber,
-                                  onSaved: (value) {
-                                    setState(() {
-                                      phoneNumber.text = value!;
-                                    });
-                                  },
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return ("10 digit number is required");
-                                    }
-                                    if (value.length < 10) {
-                                      return ("Enter a valid phone number with 10 digits");
-                                    } else if (value.length > 10) {
-                                      return ("Too many digits entered");
-                                    }
-                                  },
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                      fontSize: 14.0, color: Colors.purple),
-                                  decoration: const InputDecoration(
-                                    label: Text(
-                                      'Phone Number',
-                                      style: TextStyle(
-                                          fontSize: 14.0, color: Colors.purple),
-                                    ),
-                                    hintText: 'Phone Number',
-                                    prefix: Icon(
-                                      Icons.phone,
-                                      color: Colors.grey,
-                                    ),
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 20.0),
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                margin: const EdgeInsets.only(
-                                  bottom: 10,
-                                ),
-                                child: TextFormField(
-                                  // obscureText: true,
-                                  controller: address,
-                                  onSaved: (value) {
-                                    //Do something with the user input.
-                                    setState(() {
-                                      address.text = value!;
-                                    });
-                                  },
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                      fontSize: 14.0, color: Colors.purple),
-                                  decoration: InputDecoration(
-                                    label: const Text('Address'),
-                                    hintText: 'Address',
-                                    // prefix: const Icon(
-                                    //   Icons.my_location,
-                                    //   color: Colors.grey,
-                                    // ),
-                                    suffix: IconButton(
-                                      onPressed: () async {},
-                                      icon: const Icon(Icons.my_location),
-                                      color: Colors.green,
-                                    ),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 20.0),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 5.0,
-                              ),
-                            ],
-                          ),
+                            ),
+                            const SizedBox(
+                              height: 5.0,
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -302,13 +313,13 @@ class _UserRegisterState extends State<UserRegister> {
                     child: ElevatedButton(
                       style: ButtonStyle(
                         backgroundColor:
-                            MaterialStateProperty.all(Colors.green),
+                        MaterialStateProperty.all(Colors.green),
                         padding: MaterialStateProperty.all<EdgeInsets>(
                             const EdgeInsets.all(15)),
                         // foregroundColor:
                         //     MaterialStateProperty.all<Color>(Colors.green),
                         shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                        MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(28.0),
                             side: const BorderSide(color: Colors.green),
@@ -384,8 +395,8 @@ class _UserRegisterState extends State<UserRegister> {
       await _auth
           .createUserWithEmailAndPassword(email: email, password: password)
           .then((value) => {
-                postDetailsToFirebase(),
-              })
+        postDetailsToFirebase(),
+      })
           .catchError((e) {
         Fluttertoast.showToast(msg: "Failed to login!" + e!.message);
       });
