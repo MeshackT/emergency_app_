@@ -5,6 +5,7 @@ import 'package:afpemergencyapplication/CallForHelp.dart';
 import 'package:afpemergencyapplication/FireFighterScreen.dart';
 import 'package:afpemergencyapplication/HomeScreen.dart';
 import 'package:afpemergencyapplication/LogIn.dart';
+import 'package:afpemergencyapplication/PasswordReset.dart';
 import 'package:afpemergencyapplication/PoliceScreen.dart';
 import 'package:afpemergencyapplication/ThreeButtonsScreens.dart';
 import 'package:afpemergencyapplication/UserProfile.dart';
@@ -38,6 +39,7 @@ Future main() async {
       ThreeButtonsScreen.routeName: (ctx) => const ThreeButtonsScreen(),
       CallForHelp.routeName: (ctx) => const CallForHelp(),
       SplashScreen.routeName: (ctx) => const SplashScreen(),
+      PasswordReset.routeName: (ctx) => const PasswordReset(),
     },
 
     /// check if user is signed (Open Chat page ) if user is not signed in (open welcome page)
@@ -45,8 +47,7 @@ Future main() async {
         ? EmergencyType.routeName
         : SplashScreen.routeName,
     home: const SplashScreen(),
-    // home: const SplashScreen(),
-    // home: LogIn(),
+    // home: const LogIn(),
     // home: UserRegister(),
     // home: const EmergencyType(),
     // home: UserProfile(),

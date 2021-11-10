@@ -142,19 +142,28 @@ class _UserProfileState extends State<UserProfile> {
                                         SizedBox(
                                           height: 5,
                                         ),
-                                        Text("Names :"),
+                                        Text("Names :",
+                                            style:
+                                                TextStyle(color: Colors.grey)),
                                         SizedBox(
                                           height: 5,
                                         ),
-                                        Text("Email :"),
+                                        Text("Email :",
+                                            style:
+                                                TextStyle(color: Colors.grey)),
                                         SizedBox(
                                           height: 5,
                                         ),
-                                        Text("Phone Number :"),
+                                        Text("Phone Number :",
+                                            style:
+                                                TextStyle(color: Colors.grey)),
                                         SizedBox(
                                           height: 5,
                                         ),
-                                        Text("Address :"),
+                                        Text(
+                                          "Address :",
+                                          style: TextStyle(color: Colors.grey),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -172,21 +181,35 @@ class _UserProfileState extends State<UserProfile> {
                                         const SizedBox(
                                           height: 5,
                                         ),
-                                        Text(fullName),
+                                        Text(
+                                          fullName,
+                                          style: const TextStyle(
+                                              color: Colors.purple),
+                                        ),
                                         const SizedBox(
                                           height: 5,
                                         ),
-                                        Text(email),
+                                        Text(
+                                          email,
+                                          style: const TextStyle(
+                                              color: Colors.purple),
+                                        ),
                                         const SizedBox(
                                           height: 5,
                                         ),
-                                        Text(phoneNumber),
+                                        Text(
+                                          phoneNumber,
+                                          style: const TextStyle(
+                                              color: Colors.purple),
+                                        ),
                                         const SizedBox(
                                           height: 5,
                                         ),
                                         Text(
                                           address,
                                           textAlign: TextAlign.end,
+                                          style: const TextStyle(
+                                              color: Colors.purple),
                                         ),
                                       ],
                                     ),
@@ -196,25 +219,6 @@ class _UserProfileState extends State<UserProfile> {
                             ),
                           ],
                         ),
-
-                        // Text(fullName),
-                        //     FutureBuilder(
-                        //   future: _fetch(),
-                        //   builder: (context, snapshot) {
-                        //     if (snapshot.connectionState ==
-                        //         ConnectionState.done) {
-                        //       return Text(
-                        //         '$userModel',
-                        //         style: const TextStyle(
-                        //             fontSize: 18.0,
-                        //             color: Colors.purple,
-                        //             fontWeight: FontWeight.bold),
-                        //       );
-                        //     } else {
-                        //       return const Text("Loading data, please wait");
-                        //     }
-                        //   },
-                        // ),
                       ),
                     ),
                   ),
@@ -253,27 +257,6 @@ class _UserProfileState extends State<UserProfile> {
         MaterialPageRoute(builder: (context) => const LogIn()));
     setState(() {});
   }
-
-  // Future<void> _getUserName() async {
-  //   //instantiate the classes
-  //   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-  //   final _auth = FirebaseAuth.instance;
-  //   User? user = _auth.currentUser;
-  //
-  //   await firebaseFirestore
-  //       .collection('users')
-  //       // .document((await FirebaseAuth.instance.currentUser()).uid)
-  //       .doc(user!.uid)
-  //       .get()
-  //       .then((value) {
-  //     setState(() {
-  //       fullName.text = value.data()!['fullName'].toString();
-  //       email.text = value.data()!['email'].toString();
-  //       phoneNumber.text = value.data()!['phoneNumber'].toString();
-  //       address.text = value.data()!['address'].toString();
-  //     });
-  //   });
-  // }
 
   _fetch() async {
     if (user != null) {

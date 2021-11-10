@@ -1,51 +1,41 @@
-import 'package:afpemergencyapplication/HomeScreen.dart';
-import 'package:afpemergencyapplication/PasswordReset.dart';
+import 'package:afpemergencyapplication/LogIn.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import 'UserRegister.dart';
-
-class LogIn extends StatefulWidget {
-  static const routeName = '/login';
-
-  const LogIn({Key? key}) : super(key: key);
+class PasswordReset extends StatefulWidget {
+  const PasswordReset({Key? key}) : super(key: key);
+  static const routeName = '/passwordReset';
 
   @override
-  State<LogIn> createState() => _LogInState();
+  State<PasswordReset> createState() => _PasswordResetState();
 }
 
-class _LogInState extends State<LogIn> {
-  final GlobalKey<FormState> _formKey = GlobalKey();
-
-  bool progressBar = false;
-  bool passwordVisible = true;
-
-  bool validationAndSave() {
-    final form = _formKey.currentState;
-    if (form!.validate()) {
-      form.save();
-      return false;
-    }
-    return true;
-  }
-
-  //controllers
+class _PasswordResetState extends State<PasswordReset> {
   TextEditingController email = TextEditingController();
-  TextEditingController password = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      appBar: AppBar(
+        elevation: 0.0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_sharp),
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, LogIn.routeName);
+          },
+        ),
+        backgroundColor: Colors.green,
+        title: const Text('Reset Password'),
+      ),
       body: SafeArea(
         child: Form(
           key: _formKey,
           child: SingleChildScrollView(
             child: Column(
               children: [
-                ////////Icon Logo////////
                 Container(
                   height: 60,
                   margin: const EdgeInsets.only(bottom: 20),
@@ -59,7 +49,7 @@ class _LogInState extends State<LogIn> {
                   ),
                 ),
 
-                ///////Login header/////////////
+                ///////Reset header/////////////
                 Divider(
                   height: 8.0,
                   color: Colors.green[100],
@@ -68,7 +58,7 @@ class _LogInState extends State<LogIn> {
                   margin: const EdgeInsets.only(bottom: 5, top: 5),
                   child: const Center(
                       child: Text(
-                    "LogIn",
+                    "Reset Password",
                     style: TextStyle(color: Colors.purple, fontSize: 20.0),
                   )),
                 ),
@@ -120,55 +110,7 @@ class _LogInState extends State<LogIn> {
                                 ),
                               ),
                             ),
-                            Container(
-                              margin: const EdgeInsets.only(
-                                bottom: 20,
-                              ),
-                              child: TextFormField(
-                                controller: password,
-                                onSaved: (value) {
-                                  setState(() {
-                                    password.text = value!;
-                                  });
-                                },
-                                validator: (value) {
-                                  RegExp regex = RegExp(r'^.{6,}$');
-                                  if (value!.isEmpty) {
-                                    return ("Enter password");
-                                  }
-                                  if (value.length < 5) {
-                                    return ("Your password is too short!");
-                                  }
-                                  if (!regex.hasMatch(value)) {
-                                    return ("password min of 6 characters");
-                                  }
-                                },
-                                textAlign: TextAlign.center,
-                                obscureText: passwordVisible,
-                                style: const TextStyle(
-                                    fontSize: 14.0, color: Colors.purple),
-                                decoration: InputDecoration(
-                                  label: const Text('Password'),
-                                  hintText: 'Enter Password.',
-                                  prefix: const Icon(
-                                    Icons.lock,
-                                    color: Colors.grey,
-                                  ),
-                                  suffix: IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          passwordVisible = !passwordVisible;
-                                        });
-                                      },
-                                      icon: const Icon(
-                                        Icons.visibility,
-                                        color: Colors.grey,
-                                      )),
-                                  contentPadding: const EdgeInsets.symmetric(
-                                      vertical: 10.0, horizontal: 20.0),
-                                ),
-                              ),
-                            ),
+
                             const SizedBox(
                               height: 15.0,
                             ),
@@ -182,8 +124,6 @@ class _LogInState extends State<LogIn> {
                                   padding:
                                       MaterialStateProperty.all<EdgeInsets>(
                                           const EdgeInsets.all(15)),
-                                  // foregroundColor:
-                                  //     MaterialStateProperty.all<Color>(Colors.green),
                                   shape: MaterialStateProperty.all<
                                       RoundedRectangleBorder>(
                                     RoundedRectangleBorder(
@@ -198,15 +138,18 @@ class _LogInState extends State<LogIn> {
                                     FocusScope.of(context).unfocus();
 
                                     //get the user information
-                                    _userSignIn(email.text, password.text);
+                                    _passwordReset(
+                                      email.text,
+                                    );
 
                                     setState(() {
-                                      progressBar = true;
+                                      // progressBar = true;
+                                      email.clear();
                                     });
                                   }
                                 },
                                 child: const Text(
-                                  "LogIn",
+                                  "Reset Password",
                                   style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 16,
@@ -215,22 +158,6 @@ class _LogInState extends State<LogIn> {
                               ),
                             ),
 
-                            TextButton(
-                              onPressed: () {
-                                if (kDebugMode) {
-                                  print('register clicked');
-                                }
-                                Navigator.of(context).pushReplacementNamed(
-                                    UserRegister.routeName);
-                              },
-                              child: const Text(
-                                "Register",
-                                style: TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.green),
-                              ),
-                            ),
                             const Padding(
                               padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
                               child: Divider(
@@ -241,10 +168,10 @@ class _LogInState extends State<LogIn> {
                             TextButton(
                               onPressed: () {
                                 Navigator.pushReplacementNamed(
-                                    context, PasswordReset.routeName);
+                                    context, LogIn.routeName);
                               },
                               child: const Text(
-                                "Forgot password?",
+                                "LogIn",
                                 style: TextStyle(
                                     fontSize: 16.0,
                                     fontWeight: FontWeight.bold,
@@ -287,48 +214,32 @@ class _LogInState extends State<LogIn> {
     );
   }
 
-  Future<User?> _userSignIn(String email, String password) async {
+  Future<void> _passwordReset(String email) async {
     final _auth = FirebaseAuth.instance;
-
     try {
-      await _auth
-          .signInWithEmailAndPassword(
-              email: email.trim().toLowerCase(), password: password.trim())
-          .then((uid) => {
-                Fluttertoast.showToast(msg: "Login Success"),
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const EmergencyType()),
-                    (route) => false),
-              });
+      return _auth.sendPasswordResetEmail(email: email).whenComplete(
+            () => Fluttertoast.showToast(
+                msg: 'An email has been sent to the provided email address.',
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                textColor: Colors.grey,
+                fontSize: 16.0,
+                backgroundColor: Colors.white),
+          );
     } on FirebaseAuthException catch (e) {
       //if user is not found then display this msg
       if (e.code == 'user-not-found') {
         Fluttertoast.showToast(
             msg: 'No user found for that email.',
-            toastLength: Toast.LENGTH_SHORT,
+            toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
             textColor: Colors.grey,
             fontSize: 16.0);
 
         setState(() {
-          progressBar = false;
-        });
-      } else if (e.code == 'wrong-password') {
-        if (kDebugMode) {
-          print('Wrong password provided for that user.');
-        }
-        Fluttertoast.showToast(
-            msg: 'Wrong password provided for that user.',
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            textColor: Colors.grey,
-            fontSize: 16.0);
-        setState(() {
-          progressBar = false;
+          // progressBar = false;
         });
       }
     }
