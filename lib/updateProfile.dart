@@ -70,7 +70,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(
-                    height: 25.0,
+                    height: 5.0,
                   ),
 
                   Container(
@@ -92,7 +92,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     color: Colors.green[100],
                   ),
                   Container(
-                    margin: const EdgeInsets.only(bottom: 10, top: 10),
+                    margin: const EdgeInsets.only(bottom: 5, top: 5),
                     child: const Center(
                       child: Text(
                         "Details Update",
@@ -104,7 +104,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     ),
                   ),
                   const SizedBox(
-                    height: 10.0,
+                    height: 5.0,
                   ),
                   Card(
                     color: Colors.white,
@@ -117,8 +117,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                         child: Column(
                           children: [
                             Container(
-                              margin:
-                                  const EdgeInsets.only(bottom: 10, top: 10),
+                              margin: const EdgeInsets.only(bottom: 5, top: 10),
                               child: TextFormField(
                                 controller: email,
                                 onSaved: (value) {
@@ -279,7 +278,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     ),
                   ),
                   const SizedBox(
-                    height: 30.0,
+                    height: 15.0,
                   ),
                   //////////////buttons///////////////
 
@@ -288,17 +287,17 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     child: ElevatedButton(
                       style: ButtonStyle(
                           backgroundColor:
-                          MaterialStateProperty.all(Colors.green),
+                              MaterialStateProperty.all(Colors.green),
                           padding: MaterialStateProperty.all<EdgeInsets>(
                               const EdgeInsets.all(15)),
                           // foregroundColor:
                           //     MaterialStateProperty.all<Color>(Colors.green),
                           shape:
-                          MaterialStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(28.0),
-                                  side: const BorderSide(
-                                      color: Colors.green)))),
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(28.0),
+                                      side: const BorderSide(
+                                          color: Colors.green)))),
                       onPressed: () {
                         _uploadUserData();
                       },
@@ -312,13 +311,8 @@ class _UpdateProfileState extends State<UpdateProfile> {
                     ),
                   ),
 
-                  const Divider(
-                    height: 4.0,
-                    color: Colors.grey,
-                  ),
-
                   Padding(
-                    padding: const EdgeInsets.only(top: 60),
+                    padding: const EdgeInsets.only(top: 30),
                     child: Container(
                       alignment: Alignment.bottomCenter,
                       child: const Text(

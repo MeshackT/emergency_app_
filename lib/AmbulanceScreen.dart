@@ -52,10 +52,10 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(
-                    height: 15.0,
+                    height: 5.0,
                   ),
                   Container(
-                    margin: const EdgeInsets.only(bottom: 10, top: 0.0),
+                    margin: const EdgeInsets.only(bottom: 5, top: 0.0),
                     child: const Center(
                       child: Text(
                         "Confirm your Details",
@@ -67,7 +67,7 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                     ),
                   ),
                   const SizedBox(
-                    height: 10.0,
+                    height: 5.0,
                   ),
                   Card(
                     color: Colors.white,
@@ -81,7 +81,7 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                           children: [
                             Container(
                               margin: const EdgeInsets.only(
-                                bottom: 10,
+                                bottom: 5,
                               ),
                               child: TextFormField(
                                 controller: helpType,
@@ -110,8 +110,7 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                               ),
                             ),
                             Container(
-                              margin:
-                                  const EdgeInsets.only(bottom: 10, top: 10),
+                              margin: const EdgeInsets.only(bottom: 5, top: 5),
                               child: TextFormField(
                                 controller: email,
                                 onSaved: (value) {
@@ -152,7 +151,7 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                             ),
                             Container(
                               margin: const EdgeInsets.only(
-                                bottom: 10,
+                                bottom: 5,
                               ),
                               child: TextFormField(
                                 // obscureText: true,
@@ -224,7 +223,7 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                             ),
                             Container(
                               margin: const EdgeInsets.only(
-                                bottom: 10,
+                                bottom: 5,
                               ),
                               child: TextFormField(
                                 // obscureText: true,
@@ -273,24 +272,24 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                     ),
                   ),
                   const SizedBox(
-                    height: 20.0,
+                    height: 15.0,
                   ),
                   SizedBox(
                     height: 50,
                     child: ElevatedButton(
                       style: ButtonStyle(
                           backgroundColor:
-                          MaterialStateProperty.all(Colors.green),
+                              MaterialStateProperty.all(Colors.green),
                           padding: MaterialStateProperty.all<EdgeInsets>(
                               const EdgeInsets.all(15)),
                           // foregroundColor:
                           //     MaterialStateProperty.all<Color>(Colors.green),
                           shape:
-                          MaterialStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(28.0),
-                                  side: const BorderSide(
-                                      color: Colors.green)))),
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(28.0),
+                                      side: const BorderSide(
+                                          color: Colors.green)))),
                       onPressed: () {
                         //Send this information to the other device
                       },

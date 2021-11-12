@@ -52,10 +52,10 @@ class _PoliceScreenState extends State<PoliceScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(
-                    height: 15.0,
+                    height: 5.0,
                   ),
                   Container(
-                    margin: const EdgeInsets.only(bottom: 10, top: 0.0),
+                    margin: const EdgeInsets.only(bottom: 5, top: 0.0),
                     child: const Center(
                       child: Text(
                         "Confirm your Details",
@@ -110,8 +110,7 @@ class _PoliceScreenState extends State<PoliceScreen> {
                               ),
                             ),
                             Container(
-                              margin:
-                                  const EdgeInsets.only(bottom: 10, top: 10),
+                              margin: const EdgeInsets.only(bottom: 5, top: 5),
                               child: TextFormField(
                                 controller: email,
                                 onSaved: (value) {
@@ -152,7 +151,7 @@ class _PoliceScreenState extends State<PoliceScreen> {
                             ),
                             Container(
                               margin: const EdgeInsets.only(
-                                bottom: 10,
+                                bottom: 5,
                               ),
                               child: TextFormField(
                                 // obscureText: true,
@@ -184,7 +183,7 @@ class _PoliceScreenState extends State<PoliceScreen> {
                             ),
                             Container(
                               margin: const EdgeInsets.only(
-                                bottom: 10,
+                                bottom: 5,
                               ),
                               child: TextFormField(
                                 controller: phoneNumber,
@@ -224,7 +223,7 @@ class _PoliceScreenState extends State<PoliceScreen> {
                             ),
                             Container(
                               margin: const EdgeInsets.only(
-                                bottom: 10,
+                                bottom: 5,
                               ),
                               child: TextFormField(
                                 // obscureText: true,
@@ -272,7 +271,7 @@ class _PoliceScreenState extends State<PoliceScreen> {
                     ),
                   ),
                   const SizedBox(
-                    height: 20.0,
+                    height: 15.0,
                   ),
                   SizedBox(
                     height: 50,

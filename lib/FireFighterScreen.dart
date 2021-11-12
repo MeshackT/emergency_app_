@@ -52,10 +52,10 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const SizedBox(
-                    height: 15.0,
+                    height: 5.0,
                   ),
                   Container(
-                    margin: const EdgeInsets.only(bottom: 10, top: 0.0),
+                    margin: const EdgeInsets.only(bottom: 5, top: 0.0),
                     child: const Center(
                       child: Text(
                         "Confirm your Details",
@@ -67,7 +67,7 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
                     ),
                   ),
                   const SizedBox(
-                    height: 10.0,
+                    height: 5.0,
                   ),
                   Card(
                     color: Colors.white,
@@ -224,7 +224,7 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
                             ),
                             Container(
                               margin: const EdgeInsets.only(
-                                bottom: 10,
+                                bottom: 5,
                               ),
                               child: TextFormField(
                                 // obscureText: true,
@@ -272,20 +272,20 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
                     ),
                   ),
                   const SizedBox(
-                    height: 20.0,
+                    height: 15.0,
                   ),
                   SizedBox(
                     height: 50,
                     child: ElevatedButton(
                       style: ButtonStyle(
                         backgroundColor:
-                        MaterialStateProperty.all(Colors.orange),
+                            MaterialStateProperty.all(Colors.orange),
                         padding: MaterialStateProperty.all<EdgeInsets>(
                             const EdgeInsets.all(15)),
                         // foregroundColor:
                         //     MaterialStateProperty.all<Color>(Colors.green),
                         shape:
-                        MaterialStateProperty.all<RoundedRectangleBorder>(
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(28.0),
                             side: const BorderSide(

@@ -72,7 +72,7 @@ class _UserProfileState extends State<UserProfile> {
               child: Column(
                 children: [
                   const SizedBox(
-                    height: 40.0,
+                    height: 10.0,
                   ),
                   Container(
                     height: 70,
@@ -224,7 +224,7 @@ class _UserProfileState extends State<UserProfile> {
                   /////////////////////////////////////////////////////////////////////////
                   ////////////////////////////////////////////////////////////////////////
                   const SizedBox(
-                    height: 30.0,
+                    height: 20.0,
                   ),
                   Center(
                     child: TextButton(

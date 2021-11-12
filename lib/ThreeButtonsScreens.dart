@@ -1,5 +1,6 @@
 import 'package:afpemergencyapplication/CallerClass/DirectCallerClass.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 class ThreeButtonsScreen extends StatefulWidget {
   const ThreeButtonsScreen({Key? key}) : super(key: key);
@@ -13,6 +14,9 @@ class _ThreeButtonsScreenState extends State<ThreeButtonsScreen> {
   String name = "";
 
   DirectCallerClass directCallerClass = DirectCallerClass();
+  Logger log = Logger(
+    printer: PrettyPrinter(colors: true),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +34,13 @@ class _ThreeButtonsScreenState extends State<ThreeButtonsScreen> {
                   height: 100,
                   width: 100,
                   child: InkWell(
-                    onTap: () {
+                    onTap: () async {
                       // Navigator.pushReplacementNamed(
                       //     context, CallForHelp.routeName);
-                      directCallerClass.callAmbulanceNumber();
+                      await directCallerClass.callNumber();
+                      log.i(
+                        directCallerClass.callNumber(),
+                      );
                     },
                     child: const IconButton(
                       onPressed: null,

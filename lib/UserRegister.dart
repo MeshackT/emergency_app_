@@ -21,6 +21,7 @@ class UserRegister extends StatefulWidget {
 class _UserRegisterState extends State<UserRegister> {
   final _formKey = GlobalKey<FormState>();
   Logger log = Logger(printer: PrettyPrinter(colors: true));
+  // AuthenticationClass authenticationClass = AuthenticationClass();
   GetLocation getLocation = GetLocation();
 
   final TextEditingController email = TextEditingController();
@@ -313,13 +314,13 @@ class _UserRegisterState extends State<UserRegister> {
                     child: ElevatedButton(
                       style: ButtonStyle(
                         backgroundColor:
-                        MaterialStateProperty.all(Colors.green),
+                            MaterialStateProperty.all(Colors.green),
                         padding: MaterialStateProperty.all<EdgeInsets>(
                             const EdgeInsets.all(15)),
                         // foregroundColor:
                         //     MaterialStateProperty.all<Color>(Colors.green),
                         shape:
-                        MaterialStateProperty.all<RoundedRectangleBorder>(
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(28.0),
                             side: const BorderSide(color: Colors.green),
@@ -329,6 +330,18 @@ class _UserRegisterState extends State<UserRegister> {
                       onPressed: () {
                         // validationAndSave;
                         registerUsers(email.text, password.text);
+                        // try{
+                        //   authenticationClass
+                        //       .registerUsers(email.text, password.text)
+                        //       .whenComplete(() => Fluttertoast
+                        //       .showToast(msg: "account created successfully"),);
+                        //       Navigator.of(context).pushReplacement(
+                        //           MaterialPageRoute(builder: (context) =>
+                        //           const EmergencyType()),
+                        //           result: (route) => true);
+                        // }catch(e){
+                        //   Fluttertoast.showToast(msg: "ERROR: $e");
+                        // }
                       },
                       child: const Text(
                         "Register",
@@ -395,8 +408,8 @@ class _UserRegisterState extends State<UserRegister> {
       await _auth
           .createUserWithEmailAndPassword(email: email, password: password)
           .then((value) => {
-        postDetailsToFirebase(),
-      })
+                postDetailsToFirebase(),
+              })
           .catchError((e) {
         Fluttertoast.showToast(msg: "Failed to login!" + e!.message);
       });
