@@ -192,13 +192,12 @@ class _LogInState extends State<LogIn> {
                               onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
                                   FocusScope.of(context).unfocus();
-
-                                  //get the user information
-                                  _userSignIn(email.text, password.text);
-
                                   setState(() {
                                     progressBar = true;
                                   });
+                                  //get the user information
+                                  _userSignIn(email.text, password.text)
+                                      .whenComplete(() => progressBar = false);
                                 }
                               },
                               child: const Text(

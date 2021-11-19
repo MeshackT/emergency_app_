@@ -351,7 +351,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
 
     await firebaseFirestore
         .collection('users')
-    // .document((await FirebaseAuth.instance.currentUser()).uid)
+        // .document((await FirebaseAuth.instance.currentUser()).uid)
         .doc(user!.uid)
         .get()
         .then((value) {

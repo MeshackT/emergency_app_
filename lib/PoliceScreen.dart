@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
 
 class PoliceScreen extends StatefulWidget {
@@ -27,7 +28,7 @@ class _PoliceScreenState extends State<PoliceScreen> {
   TextEditingController fullName = TextEditingController();
   TextEditingController phoneNumber = TextEditingController();
   TextEditingController address = TextEditingController();
-  TextEditingController helpType = TextEditingController();
+  TextEditingController emergencyTypeRequest = TextEditingController();
 
   @override
   void initState() {
@@ -84,10 +85,10 @@ class _PoliceScreenState extends State<PoliceScreen> {
                                 bottom: 10,
                               ),
                               child: TextFormField(
-                                controller: helpType,
+                                controller: emergencyTypeRequest,
                                 onSaved: (value) {
                                   setState(() {
-                                    helpType.text = value!;
+                                    emergencyTypeRequest.text = value!;
                                   });
                                 },
                                 textAlign: TextAlign.center,
@@ -294,6 +295,7 @@ class _PoliceScreenState extends State<PoliceScreen> {
                       ),
                       onPressed: () {
                         //Send this information to the other device
+                        sendRequest();
                       },
                       child: const Text(
                         "Request",
@@ -335,5 +337,30 @@ class _PoliceScreenState extends State<PoliceScreen> {
         address.text = value.data()!['address'].toString();
       });
     });
+  }
+
+//////////////////////////////////////////
+//     put data in the database         //
+// ///////////////////////////////////////
+  CollectionReference users =
+      FirebaseFirestore.instance.collection('police-requests');
+
+  Future<void> sendRequest() {
+    // Call the user's CollectionReference to add a new user
+    return users
+        .add({
+          'email': email.text,
+          'phoneNumber': phoneNumber.text,
+          'emergencyTypeRequest': emergencyTypeRequest.text,
+          'fullName': fullName.text,
+          'address': address.text,
+        })
+        .then(
+          (value) => Fluttertoast.showToast(msg: "Successfully requested"),
+        )
+        .catchError(
+          (error) =>
+              Fluttertoast.showToast(msg: "failed to send details $error"),
+        );
   }
 }

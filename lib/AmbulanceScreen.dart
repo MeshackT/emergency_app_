@@ -1,9 +1,11 @@
 import 'package:afpemergencyapplication/GetLocation.dart';
+import 'package:afpemergencyapplication/models/Requests.dart';
 import 'package:afpemergencyapplication/models/UserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
 
 class AmbulanceScreen extends StatefulWidget {
@@ -17,6 +19,7 @@ class AmbulanceScreen extends StatefulWidget {
 class _AmbulanceScreenState extends State<AmbulanceScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   UserModel userModel = UserModel();
+  Request request = Request();
   GetLocation getLocation = GetLocation();
   Logger log = Logger(printer: PrettyPrinter(colors: true));
 
@@ -27,7 +30,7 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
   TextEditingController fullName = TextEditingController();
   TextEditingController phoneNumber = TextEditingController();
   TextEditingController address = TextEditingController();
-  TextEditingController helpType = TextEditingController();
+  TextEditingController emergencyTypeRequest = TextEditingController();
 
   @override
   void initState() {
@@ -37,7 +40,6 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
   }
 
   bool showProgressBar = false;
-  bool progressBar = false;
 
   @override
   Widget build(BuildContext context) {
@@ -84,10 +86,10 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                                 bottom: 5,
                               ),
                               child: TextFormField(
-                                controller: helpType,
+                                controller: emergencyTypeRequest,
                                 onSaved: (value) {
                                   setState(() {
-                                    helpType.text = value!;
+                                    emergencyTypeRequest.text = value!;
                                   });
                                 },
                                 textAlign: TextAlign.center,
@@ -290,8 +292,12 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                                       borderRadius: BorderRadius.circular(28.0),
                                       side: const BorderSide(
                                           color: Colors.green)))),
-                      onPressed: () {
-                        //Send this information to the other device
+                      onPressed: () async {
+                        //Send this information to the database
+                        setState(() {
+                          showProgressBar = true;
+                        });
+                        addUser().whenComplete(() => showProgressBar = false);
                       },
                       child: const Text(
                         "Request",
@@ -333,5 +339,30 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
         address.text = value.data()!['address'].toString();
       });
     });
+  }
+
+//////////////////////////////////////////
+//     put data in the database         //
+// ///////////////////////////////////////
+  CollectionReference users =
+      FirebaseFirestore.instance.collection('ambulance-requests');
+
+  Future<void> addUser() {
+    // Call the user's CollectionReference to add a new user
+    return users
+        .add({
+          'email': email.text,
+          'phoneNumber': phoneNumber.text,
+          'emergencyTypeRequest': emergencyTypeRequest.text,
+          'fullName': fullName.text,
+          'address': address.text,
+        })
+        .then(
+          (value) => Fluttertoast.showToast(msg: "Successfully requested"),
+        )
+        .catchError(
+          (error) =>
+              Fluttertoast.showToast(msg: "failed to send details $error"),
+        );
   }
 }
