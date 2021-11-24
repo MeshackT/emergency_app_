@@ -1,4 +1,5 @@
-import 'package:afpemergencyapplication/GetLocation.dart';
+import 'package:afpemergencyapplication/models/GetLocation.dart';
+import 'package:afpemergencyapplication/models/Requests.dart';
 import 'package:afpemergencyapplication/models/UserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,17 +8,18 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
 
-class PoliceScreen extends StatefulWidget {
-  const PoliceScreen({Key? key}) : super(key: key);
-  static const routeName = '/policeScreen';
+class AmbulanceScreen extends StatefulWidget {
+  const AmbulanceScreen({Key? key}) : super(key: key);
+  static const routeName = '/ambulanceScreen';
 
   @override
-  _PoliceScreenState createState() => _PoliceScreenState();
+  _AmbulanceScreenState createState() => _AmbulanceScreenState();
 }
 
-class _PoliceScreenState extends State<PoliceScreen> {
+class _AmbulanceScreenState extends State<AmbulanceScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   UserModel userModel = UserModel();
+  Request request = Request();
   GetLocation getLocation = GetLocation();
   Logger log = Logger(printer: PrettyPrinter(colors: true));
 
@@ -38,10 +40,11 @@ class _PoliceScreenState extends State<PoliceScreen> {
   }
 
   bool showProgressBar = false;
-  bool progressBar = false;
 
   @override
   Widget build(BuildContext context) {
+    final Stream<QuerySnapshot> _usersStream =
+        FirebaseFirestore.instance.collection('ambulance-requests').snapshots();
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -61,14 +64,14 @@ class _PoliceScreenState extends State<PoliceScreen> {
                       child: Text(
                         "Confirm your Details",
                         style: TextStyle(
-                            color: Colors.blue,
+                            color: Colors.purple,
                             fontSize: 20.0,
                             fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
                   const SizedBox(
-                    height: 10.0,
+                    height: 5.0,
                   ),
                   Card(
                     color: Colors.white,
@@ -82,7 +85,7 @@ class _PoliceScreenState extends State<PoliceScreen> {
                           children: [
                             Container(
                               margin: const EdgeInsets.only(
-                                bottom: 10,
+                                bottom: 5,
                               ),
                               child: TextFormField(
                                 controller: emergencyTypeRequest,
@@ -184,7 +187,7 @@ class _PoliceScreenState extends State<PoliceScreen> {
                             ),
                             Container(
                               margin: const EdgeInsets.only(
-                                bottom: 5,
+                                bottom: 10,
                               ),
                               child: TextFormField(
                                 controller: phoneNumber,
@@ -250,12 +253,13 @@ class _PoliceScreenState extends State<PoliceScreen> {
                                       // }
                                       getLocation.currentPosition;
                                       log.i(getLocation.getCurrentLocation());
+
                                       if (kDebugMode) {
                                         print(getLocation.getCurrentLocation());
                                       }
                                       setState(() {
                                         address.text =
-                                            getLocation.currentAddress!;
+                                        getLocation.currentAddress!;
                                       });
                                     },
                                     icon: const Icon(Icons.my_location),
@@ -278,24 +282,24 @@ class _PoliceScreenState extends State<PoliceScreen> {
                     height: 50,
                     child: ElevatedButton(
                       style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Colors.blue),
-                        padding: MaterialStateProperty.all<EdgeInsets>(
-                            const EdgeInsets.all(15)),
-                        // foregroundColor:
-                        //     MaterialStateProperty.all<Color>(Colors.green),
-                        shape:
-                        MaterialStateProperty.all<RoundedRectangleBorder>(
-                          RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(28.0),
-                            side: const BorderSide(
-                              color: Colors.blue,
-                            ),
-                          ),
-                        ),
-                      ),
-                      onPressed: () {
-                        //Send this information to the other device
-                        sendRequest();
+                          backgroundColor:
+                          MaterialStateProperty.all(Colors.green),
+                          padding: MaterialStateProperty.all<EdgeInsets>(
+                              const EdgeInsets.all(15)),
+                          // foregroundColor:
+                          //     MaterialStateProperty.all<Color>(Colors.green),
+                          shape:
+                          MaterialStateProperty.all<RoundedRectangleBorder>(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(28.0),
+                                  side: const BorderSide(
+                                      color: Colors.green)))),
+                      onPressed: () async {
+                        //Send this information to the database
+                        setState(() {
+                          showProgressBar = true;
+                        });
+                        addUser().whenComplete(() => showProgressBar = false);
                       },
                       child: const Text(
                         "Request",
@@ -315,7 +319,7 @@ class _PoliceScreenState extends State<PoliceScreen> {
     );
   }
 
-///////////////////////////////////////////
+  ///////////////////////////////////////////
   //            fetch user data            //
   //////////////////////////////////////////
   Future<void> _getUserData() async {
@@ -343,12 +347,13 @@ class _PoliceScreenState extends State<PoliceScreen> {
 //     put data in the database         //
 // ///////////////////////////////////////
   CollectionReference users =
-      FirebaseFirestore.instance.collection('police-requests');
+      FirebaseFirestore.instance.collection('ambulance-requests');
 
-  Future<void> sendRequest() {
+  Future<void> addUser() {
     // Call the user's CollectionReference to add a new user
     return users
         .add({
+          'uid': uid,
           'email': email.text,
           'phoneNumber': phoneNumber.text,
           'emergencyTypeRequest': emergencyTypeRequest.text,

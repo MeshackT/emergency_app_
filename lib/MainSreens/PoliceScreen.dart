@@ -1,4 +1,4 @@
-import 'package:afpemergencyapplication/GetLocation.dart';
+import 'package:afpemergencyapplication/models/GetLocation.dart';
 import 'package:afpemergencyapplication/models/UserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,15 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
 
-class FireFighterScreen extends StatefulWidget {
-  const FireFighterScreen({Key? key}) : super(key: key);
-  static const routeName = '/firefighterScreen';
+class PoliceScreen extends StatefulWidget {
+  const PoliceScreen({Key? key}) : super(key: key);
+  static const routeName = '/policeScreen';
 
   @override
-  _FireFighterScreenState createState() => _FireFighterScreenState();
+  _PoliceScreenState createState() => _PoliceScreenState();
 }
 
-class _FireFighterScreenState extends State<FireFighterScreen> {
+class _PoliceScreenState extends State<PoliceScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   UserModel userModel = UserModel();
   GetLocation getLocation = GetLocation();
@@ -61,14 +61,14 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
                       child: Text(
                         "Confirm your Details",
                         style: TextStyle(
-                            color: Colors.orange,
+                            color: Colors.blue,
                             fontSize: 20.0,
                             fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
                   const SizedBox(
-                    height: 5.0,
+                    height: 10.0,
                   ),
                   Card(
                     color: Colors.white,
@@ -111,8 +111,7 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
                               ),
                             ),
                             Container(
-                              margin:
-                                  const EdgeInsets.only(bottom: 10, top: 10),
+                              margin: const EdgeInsets.only(bottom: 5, top: 5),
                               child: TextFormField(
                                 controller: email,
                                 onSaved: (value) {
@@ -153,7 +152,7 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
                             ),
                             Container(
                               margin: const EdgeInsets.only(
-                                bottom: 10,
+                                bottom: 5,
                               ),
                               child: TextFormField(
                                 // obscureText: true,
@@ -185,7 +184,7 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
                             ),
                             Container(
                               margin: const EdgeInsets.only(
-                                bottom: 10,
+                                bottom: 5,
                               ),
                               child: TextFormField(
                                 controller: phoneNumber,
@@ -279,18 +278,17 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
                     height: 50,
                     child: ElevatedButton(
                       style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all(Colors.orange),
+                        backgroundColor: MaterialStateProperty.all(Colors.blue),
                         padding: MaterialStateProperty.all<EdgeInsets>(
                             const EdgeInsets.all(15)),
                         // foregroundColor:
                         //     MaterialStateProperty.all<Color>(Colors.green),
                         shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                        MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(28.0),
                             side: const BorderSide(
-                              color: Colors.orange,
+                              color: Colors.blue,
                             ),
                           ),
                         ),
@@ -317,7 +315,7 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
     );
   }
 
-  ///////////////////////////////////////////
+///////////////////////////////////////////
   //            fetch user data            //
   //////////////////////////////////////////
   Future<void> _getUserData() async {
@@ -341,11 +339,11 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
     });
   }
 
-  //////////////////////////////////////////
+//////////////////////////////////////////
 //     put data in the database         //
 // ///////////////////////////////////////
   CollectionReference users =
-      FirebaseFirestore.instance.collection('fire-fighter-request');
+      FirebaseFirestore.instance.collection('police-requests');
 
   Future<void> sendRequest() {
     // Call the user's CollectionReference to add a new user

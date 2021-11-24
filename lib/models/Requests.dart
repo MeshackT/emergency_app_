@@ -17,7 +17,7 @@ class Request {
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
-      'email': email.toString(),
+      'email': email,
       'phoneNumber': phoneNumber,
       'emergencyTypeRequest': emergencyTypeRequest,
       'fullName': fullName,

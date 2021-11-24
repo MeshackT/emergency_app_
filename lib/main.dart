@@ -1,20 +1,24 @@
 import 'dart:async';
 
-import 'package:afpemergencyapplication/AmbulanceScreen.dart';
-import 'package:afpemergencyapplication/CallForHelp.dart';
-import 'package:afpemergencyapplication/FireFighterScreen.dart';
-import 'package:afpemergencyapplication/HomeScreen.dart';
-import 'package:afpemergencyapplication/LogIn.dart';
-import 'package:afpemergencyapplication/PasswordReset.dart';
-import 'package:afpemergencyapplication/PoliceScreen.dart';
-import 'package:afpemergencyapplication/ThreeButtonsScreens.dart';
-import 'package:afpemergencyapplication/UserProfile.dart';
-import 'package:afpemergencyapplication/UserRegister.dart';
-import 'package:afpemergencyapplication/updateProfile.dart';
+import 'package:afpemergencyapplication/LoginAndRegisterScreens/LogIn.dart';
+import 'package:afpemergencyapplication/LoginAndRegisterScreens/PasswordReset.dart';
+import 'package:afpemergencyapplication/LoginAndRegisterScreens/UserProfile.dart';
+import 'package:afpemergencyapplication/LoginAndRegisterScreens/UserRegister.dart';
+import 'package:afpemergencyapplication/LoginAndRegisterScreens/updateProfile.dart';
+import 'package:afpemergencyapplication/MainSreens/AmbulanceScreen.dart';
+import 'package:afpemergencyapplication/MainSreens/FireFighterScreen.dart';
+import 'package:afpemergencyapplication/MainSreens/HomeScreen.dart';
+import 'package:afpemergencyapplication/MainSreens/PoliceScreen.dart';
+import 'package:afpemergencyapplication/MainSreens/ThreeButtonsScreens.dart';
+import 'package:afpemergencyapplication/RequestAndHistory/MyHistory.dart';
+import 'package:afpemergencyapplication/RequestAndHistory/MyRequest.dart';
+import 'package:afpemergencyapplication/UserRequestHistoryScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+bool loaded = false;
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,7 +32,7 @@ Future main() async {
       LogIn.routeName: (ctx) => const LogIn(),
       UserRegister.routeName: (ctx) => const UserRegister(),
       ////
-      EmergencyType.routeName: (ctx) => const EmergencyType(),
+      EmergencyType.routeName: (ctx) => EmergencyType(),
       ////update profile
       UpdateProfile.routeName: (ctx) => const UpdateProfile(),
       UserProfile.routeName: (ctx) => const UserProfile(),
@@ -37,9 +41,17 @@ Future main() async {
       FireFighterScreen.routeName: (ctx) => const FireFighterScreen(),
       PoliceScreen.routeName: (ctx) => const PoliceScreen(),
       ThreeButtonsScreen.routeName: (ctx) => const ThreeButtonsScreen(),
-      CallForHelp.routeName: (ctx) => const CallForHelp(),
+      ////splashScreen
       SplashScreen.routeName: (ctx) => const SplashScreen(),
+      ////reset password
       PasswordReset.routeName: (ctx) => const PasswordReset(),
+      ////list of requests made
+      UserRequestHistoryScreen.routeName: (ctx) =>
+          const UserRequestHistoryScreen(),
+      ////my request screen
+      MyRequest.routeName: (ctx) => MyRequest(),
+      ////my request history
+      MyHistory.routeName: (ctx) => MyHistory(),
     },
 
     /// check if user is signed (Open Chat page ) if user is not signed in (open welcome page)
@@ -57,6 +69,7 @@ Future main() async {
     theme: ThemeData(
       primaryColor: Colors.green,
       primaryColorDark: Colors.purple[700],
+      fontFamily: 'GaramondBold',
       appBarTheme: const AppBarTheme(color: Colors.white),
     ),
   ));
@@ -83,8 +96,12 @@ class _SplashScreenState extends State<SplashScreen> {
           print('User is currently signed out! then go to splash screen');
         }
         Timer(const Duration(seconds: 3), () {
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (_) => const LogIn()));
+          Navigator.pushNamedAndRemoveUntil(
+              context, LogIn.routeName, (route) => false);
+          // Navigator.pushReplacement(
+          //     context, MaterialPageRoute(builder: (context) => const LogIn()));
+          // Navigator.of(context).pushReplacement(
+          //     MaterialPageRoute(builder: (_) => const LogIn()));
         });
       } else {
         if (kDebugMode) {

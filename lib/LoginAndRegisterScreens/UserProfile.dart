@@ -1,14 +1,14 @@
 import 'dart:ui';
 
-import 'package:afpemergencyapplication/HomeScreen.dart';
-import 'package:afpemergencyapplication/LogIn.dart';
-import 'package:afpemergencyapplication/updateProfile.dart';
+import 'package:afpemergencyapplication/LoginAndRegisterScreens/LogIn.dart';
+import 'package:afpemergencyapplication/LoginAndRegisterScreens/updateProfile.dart';
+import 'package:afpemergencyapplication/MainSreens/HomeScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'models/UserModel.dart';
+import '../models/UserModel.dart';
 
 class UserProfile extends StatefulWidget {
   const UserProfile({Key? key}) : super(key: key);

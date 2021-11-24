@@ -1,5 +1,6 @@
-import 'package:afpemergencyapplication/GetLocation.dart';
-import 'package:afpemergencyapplication/LogIn.dart';
+import 'package:afpemergencyapplication/LoginAndRegisterScreens/LogIn.dart';
+import 'package:afpemergencyapplication/MainSreens/HomeScreen.dart';
+import 'package:afpemergencyapplication/models/GetLocation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -7,8 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
 
-import 'HomeScreen.dart';
-import 'models/UserModel.dart';
+import '../models/UserModel.dart';
 
 class UserRegister extends StatefulWidget {
   const UserRegister({Key? key}) : super(key: key);
@@ -439,7 +439,7 @@ class _UserRegisterState extends State<UserRegister> {
 
     Fluttertoast.showToast(msg: "account created successfully");
     Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const EmergencyType()),
+        MaterialPageRoute(builder: (context) => EmergencyType()),
         result: (route) => false);
   }
 }

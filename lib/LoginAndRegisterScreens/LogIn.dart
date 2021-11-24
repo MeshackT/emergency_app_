@@ -1,5 +1,5 @@
-import 'package:afpemergencyapplication/HomeScreen.dart';
-import 'package:afpemergencyapplication/PasswordReset.dart';
+import 'package:afpemergencyapplication/LoginAndRegisterScreens/PasswordReset.dart';
+import 'package:afpemergencyapplication/MainSreens/HomeScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -292,8 +292,7 @@ class _LogInState extends State<LogIn> {
                 Fluttertoast.showToast(msg: "Login Success"),
                 Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => const EmergencyType()),
+                    MaterialPageRoute(builder: (context) => EmergencyType()),
                     (route) => false),
               });
     } on FirebaseAuthException catch (e) {

@@ -1,6 +1,6 @@
-import 'package:afpemergencyapplication/GetLocation.dart';
-import 'package:afpemergencyapplication/models/Requests.dart';
-import 'package:afpemergencyapplication/models/UserModel.dart';
+import 'package:afpemergencyapplication/LoginAndRegisterScreens/LogIn.dart';
+import 'package:afpemergencyapplication/LoginAndRegisterScreens/UserProfile.dart';
+import 'package:afpemergencyapplication/models/GetLocation.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -8,18 +8,23 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
 
-class AmbulanceScreen extends StatefulWidget {
-  const AmbulanceScreen({Key? key}) : super(key: key);
-  static const routeName = '/ambulanceScreen';
+// import 'package:geocoding/geocoding.dart';
+// import 'package:geolocator/geolocator.dart';
+
+import '../models/UserModel.dart';
+
+class UpdateProfile extends StatefulWidget {
+  static const routeName = '/updateProfile';
+
+  const UpdateProfile({Key? key}) : super(key: key);
 
   @override
-  _AmbulanceScreenState createState() => _AmbulanceScreenState();
+  State<UpdateProfile> createState() => _UpdateProfileState();
 }
 
-class _AmbulanceScreenState extends State<AmbulanceScreen> {
+class _UpdateProfileState extends State<UpdateProfile> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   UserModel userModel = UserModel();
-  Request request = Request();
   GetLocation getLocation = GetLocation();
   Logger log = Logger(printer: PrettyPrinter(colors: true));
 
@@ -30,7 +35,6 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
   TextEditingController fullName = TextEditingController();
   TextEditingController phoneNumber = TextEditingController();
   TextEditingController address = TextEditingController();
-  TextEditingController emergencyTypeRequest = TextEditingController();
 
   @override
   void initState() {
@@ -39,11 +43,23 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
     _getUserData();
   }
 
-  bool showProgressBar = false;
-
+  //
+  // late Position _currentPosition;
+  // late String _currentAddress;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0.0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_sharp),
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, UserProfile.routeName);
+          },
+        ),
+        backgroundColor: Colors.green,
+        title: const Text('Profile'),
+      ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Center(
@@ -56,11 +72,30 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                   const SizedBox(
                     height: 5.0,
                   ),
+
                   Container(
-                    margin: const EdgeInsets.only(bottom: 5, top: 0.0),
+                    height: 60,
+                    margin: const EdgeInsets.only(
+                      bottom: 7,
+                    ),
+                    child: const Padding(
+                      padding: EdgeInsets.only(top: 2),
+                      child: Icon(
+                        Icons.my_location,
+                        size: 70,
+                        color: Colors.green,
+                      ),
+                    ),
+                  ),
+                  Divider(
+                    height: 8.0,
+                    color: Colors.green[100],
+                  ),
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 5, top: 5),
                     child: const Center(
                       child: Text(
-                        "Confirm your Details",
+                        "Details Update",
                         style: TextStyle(
                             color: Colors.purple,
                             fontSize: 20.0,
@@ -82,37 +117,7 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                         child: Column(
                           children: [
                             Container(
-                              margin: const EdgeInsets.only(
-                                bottom: 5,
-                              ),
-                              child: TextFormField(
-                                controller: emergencyTypeRequest,
-                                onSaved: (value) {
-                                  setState(() {
-                                    emergencyTypeRequest.text = value!;
-                                  });
-                                },
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(
-                                    fontSize: 14.0, color: Colors.purple),
-                                decoration: const InputDecoration(
-                                  label: Text(
-                                    'Emergency Type',
-                                    style: TextStyle(
-                                        fontSize: 14.0, color: Colors.purple),
-                                  ),
-                                  hintText: 'Enter Emergency Type',
-                                  prefix: Icon(
-                                    Icons.help,
-                                    color: Colors.grey,
-                                  ),
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 10.0, horizontal: 20.0),
-                                ),
-                              ),
-                            ),
-                            Container(
-                              margin: const EdgeInsets.only(bottom: 5, top: 5),
+                              margin: const EdgeInsets.only(bottom: 5, top: 10),
                               child: TextFormField(
                                 controller: email,
                                 onSaved: (value) {
@@ -153,7 +158,7 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                             ),
                             Container(
                               margin: const EdgeInsets.only(
-                                bottom: 5,
+                                bottom: 10,
                               ),
                               child: TextFormField(
                                 // obscureText: true,
@@ -225,7 +230,7 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                             ),
                             Container(
                               margin: const EdgeInsets.only(
-                                bottom: 5,
+                                bottom: 10,
                               ),
                               child: TextFormField(
                                 // obscureText: true,
@@ -244,17 +249,16 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                                   hintText: 'Address',
                                   suffix: IconButton(
                                     onPressed: () async {
+                                      // _determinePosition();
+                                      // _getCurrentLocation();
                                       // if (getLocation.currentPosition != null) {
-                                      //   getLocation.currentPosition;
+                                      //   return getLocation.currentPosition;
                                       // } else {
                                       //   return;
                                       // }
                                       getLocation.currentPosition;
                                       log.i(getLocation.getCurrentLocation());
 
-                                      if (kDebugMode) {
-                                        print(getLocation.getCurrentLocation());
-                                      }
                                       setState(() {
                                         address.text =
                                             getLocation.currentAddress!;
@@ -276,6 +280,8 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                   const SizedBox(
                     height: 15.0,
                   ),
+                  //////////////buttons///////////////
+
                   SizedBox(
                     height: 50,
                     child: ElevatedButton(
@@ -292,19 +298,29 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                                       borderRadius: BorderRadius.circular(28.0),
                                       side: const BorderSide(
                                           color: Colors.green)))),
-                      onPressed: () async {
-                        //Send this information to the database
-                        setState(() {
-                          showProgressBar = true;
-                        });
-                        addUser().whenComplete(() => showProgressBar = false);
+                      onPressed: () {
+                        _uploadUserData();
                       },
                       child: const Text(
-                        "Request",
+                        "Update",
                         style: TextStyle(
                             color: Colors.white,
                             fontSize: 16,
                             fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: Container(
+                      alignment: Alignment.bottomCenter,
+                      child: const Text(
+                        "SOCORO",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.purple),
                       ),
                     ),
                   ),
@@ -315,6 +331,13 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> logout(BuildContext context) async {
+    await FirebaseAuth.instance.signOut();
+    Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => const LogIn()));
+    setState(() {});
   }
 
   ///////////////////////////////////////////
@@ -328,7 +351,7 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
 
     await firebaseFirestore
         .collection('users')
-    // .document((await FirebaseAuth.instance.currentUser()).uid)
+        // .document((await FirebaseAuth.instance.currentUser()).uid)
         .doc(user!.uid)
         .get()
         .then((value) {
@@ -341,28 +364,44 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
     });
   }
 
-//////////////////////////////////////////
-//     put data in the database         //
-// ///////////////////////////////////////
-  CollectionReference users =
-      FirebaseFirestore.instance.collection('ambulance-requests');
+  ///////////////////////////////////////////
+  //           upload user data           //
+  //////////////////////////////////////////
+  Future<void> _uploadUserData() async {
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    final _auth = FirebaseAuth.instance;
+    User? user = _auth.currentUser;
 
-  Future<void> addUser() {
-    // Call the user's CollectionReference to add a new user
-    return users
-        .add({
-          'email': email.text,
-          'phoneNumber': phoneNumber.text,
-          'emergencyTypeRequest': emergencyTypeRequest.text,
-          'fullName': fullName.text,
-          'address': address.text,
-        })
-        .then(
-          (value) => Fluttertoast.showToast(msg: "Successfully requested"),
-        )
-        .catchError(
-          (error) =>
-              Fluttertoast.showToast(msg: "failed to send details $error"),
+    // CollectionReference users = FirebaseFirestore.instance.collection('users');
+
+    try {
+      //writing to firebase
+      //adding the details to the constructor
+      await firebaseFirestore.collection("users").doc(user?.uid).update({
+        'fullName': fullName.text,
+        'email': email.text,
+        'phoneNumber': phoneNumber.text,
+        'address': address.text
+      }).whenComplete(
+            () => Fluttertoast.showToast(
+            msg: 'Update Complete',
+            toastLength: Toast.LENGTH_LONG,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            fontSize: 16),
+      ); //writing to firebase
+    } catch (e) {
+      setState(() {
+        const CircularProgressIndicator(
+          backgroundColor: Colors.red,
         );
+      });
+      Fluttertoast.showToast(
+          msg: '$e',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          fontSize: 16);
+    }
   }
 }
