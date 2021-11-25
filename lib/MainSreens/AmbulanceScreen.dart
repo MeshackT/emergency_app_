@@ -45,7 +45,7 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
   @override
   Widget build(BuildContext context) {
     final Stream<QuerySnapshot> _usersStream =
-    FirebaseFirestore.instance.collection('ambulance-requests').snapshots();
+        FirebaseFirestore.instance.collection('ambulance-requests').snapshots();
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -260,7 +260,7 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                                       }
                                       setState(() {
                                         address.text =
-                                        getLocation.currentAddress!;
+                                            getLocation.currentAddress!;
                                       });
                                     },
                                     icon: const Icon(Icons.my_location),
@@ -284,24 +284,24 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                     child: ElevatedButton(
                       style: ButtonStyle(
                           backgroundColor:
-                          MaterialStateProperty.all(Colors.green),
+                              MaterialStateProperty.all(Colors.green),
                           padding: MaterialStateProperty.all<EdgeInsets>(
                               const EdgeInsets.all(15)),
                           // foregroundColor:
                           //     MaterialStateProperty.all<Color>(Colors.green),
                           shape:
-                          MaterialStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(28.0),
-                                  side: const BorderSide(
-                                      color: Colors.green)))),
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(28.0),
+                                      side: const BorderSide(
+                                          color: Colors.green)))),
                       onPressed: () async {
                         //Send this information to the database
                         setState(() {
                           showProgressBar = true;
                         });
                         addUser().whenComplete(
-                              () => showProgressBar = false,
+                          () => showProgressBar = false,
                         );
                       },
                       child: const Text(
@@ -351,7 +351,7 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
 //     put data in the database         //
 // ///////////////////////////////////////
   CollectionReference users =
-  FirebaseFirestore.instance.collection('ambulance-requests');
+      FirebaseFirestore.instance.collection('ambulance-requests');
 
   Future<void> addUser() {
     User? user = FirebaseAuth.instance.currentUser;
@@ -359,14 +359,14 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
     // getitemFromLocalStorage();
     return users
         .add({
-      'uid': uid,
-      'email': email.text,
-      'phoneNumber': phoneNumber.text,
-      'emergencyTypeRequest': emergencyTypeRequest.text,
-      'fullName': fullName.text,
-      'address': address.text,
-      'owner': user?.uid,
-    })
+          'uid': uid,
+          'email': email.text,
+          'phoneNumber': phoneNumber.text,
+          'emergencyTypeRequest': emergencyTypeRequest.text,
+          'fullName': fullName.text,
+          'address': address.text,
+          'owner': user?.uid,
+        })
         .then(
           (value) => Fluttertoast.showToast(msg: "Successfully requested")
               .whenComplete(() => Navigator.pushNamedAndRemoveUntil(
@@ -374,7 +374,7 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
         )
         .catchError(
           (error) =>
-          Fluttertoast.showToast(msg: "failed to send details $error"),
-    );
+              Fluttertoast.showToast(msg: "failed to send details $error"),
+        );
   }
 }

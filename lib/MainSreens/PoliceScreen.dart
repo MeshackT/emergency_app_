@@ -256,7 +256,7 @@ class _PoliceScreenState extends State<PoliceScreen> {
                                       }
                                       setState(() {
                                         address.text =
-                                        getLocation.currentAddress!;
+                                            getLocation.currentAddress!;
                                       });
                                     },
                                     icon: const Icon(Icons.my_location),
@@ -344,20 +344,20 @@ class _PoliceScreenState extends State<PoliceScreen> {
 //     put data in the database         //
 // ///////////////////////////////////////
   CollectionReference users =
-  FirebaseFirestore.instance.collection('police-requests');
+      FirebaseFirestore.instance.collection('police-requests');
 
   Future<void> sendRequest() {
     // Call the user's CollectionReference to add a new user
     return users
         .add({
-      'uid': uid,
-      'email': email.text,
-      'phoneNumber': phoneNumber.text,
-      'emergencyTypeRequest': emergencyTypeRequest.text,
-      'fullName': fullName.text,
-      'address': address.text,
-      'owner': user?.uid,
-    })
+          'uid': uid,
+          'email': email.text,
+          'phoneNumber': phoneNumber.text,
+          'emergencyTypeRequest': emergencyTypeRequest.text,
+          'fullName': fullName.text,
+          'address': address.text,
+          'owner': user?.uid,
+        })
         .then(
           (value) => Fluttertoast.showToast(msg: "Successfully requested")
               .whenComplete(() => Navigator.push(
@@ -369,7 +369,7 @@ class _PoliceScreenState extends State<PoliceScreen> {
         )
         .catchError(
           (error) =>
-          Fluttertoast.showToast(msg: "failed to send details $error"),
-    );
+              Fluttertoast.showToast(msg: "failed to send details $error"),
+        );
   }
 }

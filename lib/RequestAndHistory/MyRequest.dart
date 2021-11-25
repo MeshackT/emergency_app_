@@ -3,6 +3,7 @@ import 'package:afpemergencyapplication/models/UserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
 
 class MyRequest extends StatefulWidget {
@@ -170,10 +171,29 @@ class _MyRequestState extends State<MyRequest> {
                                 color: Colors.grey,
                               ),
                               onPressed: () async {
-                                final CollectionReference requestCollection =
-                                    FirebaseFirestore.instance
-                                        .collection('ambulance-requests');
-                                requestCollection.doc(uid).delete();
+                                try {
+                                  FirebaseFirestore.instance
+                                      .collection('ambulance-requests')
+                                      .doc(document.id)
+                                      .delete()
+                                      .then((value) => logger.i(document.id));
+                                  Fluttertoast.showToast(
+                                      msg: 'Request Deleted',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      textColor: Colors.grey,
+                                      fontSize: 16.0);
+                                } catch (error) {
+                                  logger.i("failed $error ");
+                                  Fluttertoast.showToast(
+                                      msg: 'Request failed to Deleted $error',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      textColor: Colors.grey,
+                                      fontSize: 16.0);
+                                }
                               },
                             ),
                             const SizedBox(

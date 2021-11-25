@@ -160,10 +160,29 @@ class _PoliceRequestState extends State<PoliceRequest> {
                                 color: Colors.grey,
                               ),
                               onPressed: () async {
-                                final CollectionReference requestCollection =
-                                    FirebaseFirestore.instance
-                                        .collection('police-requests');
-                                requestCollection.doc(uid).delete();
+                                try {
+                                  FirebaseFirestore.instance
+                                      .collection('police-requests')
+                                      .doc(document.id)
+                                      .delete()
+                                      .then((value) => logger.i(document.id));
+                                  Fluttertoast.showToast(
+                                      msg: 'Request Deleted',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      textColor: Colors.grey,
+                                      fontSize: 16.0);
+                                } catch (error) {
+                                  logger.i("failed $error ");
+                                  Fluttertoast.showToast(
+                                      msg: 'Request failed to Deleted $error',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      textColor: Colors.grey,
+                                      fontSize: 16.0);
+                                }
                               },
                             ),
                             const SizedBox(
@@ -175,7 +194,7 @@ class _PoliceRequestState extends State<PoliceRequest> {
                                 size: 20,
                                 color: Colors.grey,
                               ),
-                              onPressed: () {},
+                              onPressed: () async {},
                             ),
                           ],
                         ),
