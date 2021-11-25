@@ -1,3 +1,4 @@
+import 'package:afpemergencyapplication/RequestAndHistory/FireFighterRequest.dart';
 import 'package:afpemergencyapplication/models/GetLocation.dart';
 import 'package:afpemergencyapplication/models/UserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -112,7 +113,7 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
                             ),
                             Container(
                               margin:
-                                  const EdgeInsets.only(bottom: 10, top: 10),
+                              const EdgeInsets.only(bottom: 10, top: 10),
                               child: TextFormField(
                                 controller: email,
                                 onSaved: (value) {
@@ -256,7 +257,7 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
                                       }
                                       setState(() {
                                         address.text =
-                                            getLocation.currentAddress!;
+                                        getLocation.currentAddress!;
                                       });
                                     },
                                     icon: const Icon(Icons.my_location),
@@ -280,13 +281,13 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
                     child: ElevatedButton(
                       style: ButtonStyle(
                         backgroundColor:
-                            MaterialStateProperty.all(Colors.orange),
+                        MaterialStateProperty.all(Colors.orange),
                         padding: MaterialStateProperty.all<EdgeInsets>(
                             const EdgeInsets.all(15)),
                         // foregroundColor:
                         //     MaterialStateProperty.all<Color>(Colors.green),
                         shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                        MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(28.0),
                             side: const BorderSide(
@@ -328,7 +329,7 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
 
     await firebaseFirestore
         .collection('users')
-        // .document((await FirebaseAuth.instance.currentUser()).uid)
+    // .document((await FirebaseAuth.instance.currentUser()).uid)
         .doc(user!.uid)
         .get()
         .then((value) {
@@ -345,26 +346,34 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
 //     put data in the database         //
 // ///////////////////////////////////////
   CollectionReference users =
-      FirebaseFirestore.instance.collection('fire-fighter-request');
+  FirebaseFirestore.instance.collection('fire-fighter-request');
 
   Future<void> sendRequest() {
     // Call the user's CollectionReference to add a new user
     return users
         .add({
-          'uid': uid,
-          'email': email.text,
-          'phoneNumber': phoneNumber.text,
-          'emergencyTypeRequest': emergencyTypeRequest.text,
-          'fullName': fullName.text,
-          'address': address.text,
-          'owner': user?.uid,
-        })
+      'uid': uid,
+      'email': email.text,
+      'phoneNumber': phoneNumber.text,
+      'emergencyTypeRequest': emergencyTypeRequest.text,
+      'fullName': fullName.text,
+      'address': address.text,
+      'owner': user?.uid,
+    })
         .then(
-          (value) => Fluttertoast.showToast(msg: "Successfully requested"),
+          (value) => Fluttertoast.showToast(msg: "Successfully requested")
+              .whenComplete(
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const FireFighterRequest(),
+              ),
+            ),
+          ),
         )
         .catchError(
           (error) =>
-              Fluttertoast.showToast(msg: "failed to send details $error"),
-        );
+          Fluttertoast.showToast(msg: "failed to send details $error"),
+    );
   }
 }

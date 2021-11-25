@@ -4,9 +4,8 @@ import 'package:afpemergencyapplication/MainSreens/AmbulanceScreen.dart';
 import 'package:afpemergencyapplication/MainSreens/FireFighterScreen.dart';
 import 'package:afpemergencyapplication/MainSreens/PoliceScreen.dart';
 import 'package:afpemergencyapplication/MainSreens/ThreeButtonsScreens.dart';
-import 'package:afpemergencyapplication/RequestAndHistory/MainAlertType.dart';
+import 'package:afpemergencyapplication/RequestAndHistory/MainAlertTypeScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class EmergencyType extends StatefulWidget {
@@ -181,8 +180,10 @@ class _EmergencyTypeState extends State<EmergencyType> {
     final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
     switch (item) {
       case 0:
-        Navigator.pushNamedAndRemoveUntil(
-            context, MainAlertTypeScreen.routeName, (route) => false);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MainAlertTypeScreen()),
+        );
         break;
       case 1:
         Navigator.pushNamedAndRemoveUntil(

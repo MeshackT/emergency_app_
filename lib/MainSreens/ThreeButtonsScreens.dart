@@ -21,23 +21,23 @@ class _ThreeButtonsScreenState extends State<ThreeButtonsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          const Padding(
-            padding: const EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 40.0),
-            child: Center(
-              child: Text(
-                "Click-To-Call",
-                style: TextStyle(
-                  color: Colors.purple,
-                  fontSize: 20,
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Padding(
+              padding: EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 40.0),
+              child: Center(
+                child: Text(
+                  "Click-To-Call",
+                  style: TextStyle(
+                    color: Colors.purple,
+                    fontSize: 20,
+                  ),
                 ),
               ),
             ),
-          ),
-          Center(
-            child: SingleChildScrollView(
+            Center(
               child: Column(
                 children: [
                   //////////////////////Ambulance/////////////////////////////////////
@@ -117,8 +117,8 @@ class _ThreeButtonsScreenState extends State<ThreeButtonsScreen> {
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

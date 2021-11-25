@@ -10,9 +10,11 @@ import 'package:afpemergencyapplication/MainSreens/FireFighterScreen.dart';
 import 'package:afpemergencyapplication/MainSreens/HomeScreen.dart';
 import 'package:afpemergencyapplication/MainSreens/PoliceScreen.dart';
 import 'package:afpemergencyapplication/MainSreens/ThreeButtonsScreens.dart';
-import 'package:afpemergencyapplication/RequestAndHistory/MainAlertType.dart';
+import 'package:afpemergencyapplication/RequestAndHistory/FireFighterRequest.dart';
+import 'package:afpemergencyapplication/RequestAndHistory/MainAlertTypeScreen.dart';
 import 'package:afpemergencyapplication/RequestAndHistory/MyHistory.dart';
 import 'package:afpemergencyapplication/RequestAndHistory/MyRequest.dart';
+import 'package:afpemergencyapplication/RequestAndHistory/PoliceRequest.dart';
 import 'package:afpemergencyapplication/UserRequestHistoryScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -50,11 +52,12 @@ Future main() async {
       UserRequestHistoryScreen.routeName: (ctx) =>
           const UserRequestHistoryScreen(),
       ////my request screen
-      MyRequest.routeName: (ctx) => MyRequest(),
-      ////my request history
       MyHistory.routeName: (ctx) => MyHistory(),
       //my alert button screens
+      MyRequest.routeName: (ctx) => MyRequest(),
       MainAlertTypeScreen.routeName: (ctx) => const MainAlertTypeScreen(),
+      FireFighterRequest.routeName: (ctx) => const FireFighterRequest(),
+      PoliceRequest.routeName: (ctx) => const PoliceRequest(),
     },
 
     /// check if user is signed (Open Chat page ) if user is not signed in (open welcome page)

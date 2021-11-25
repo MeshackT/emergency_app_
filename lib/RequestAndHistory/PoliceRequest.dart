@@ -3,16 +3,19 @@ import 'package:afpemergencyapplication/models/UserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
 
-class MyRequest extends StatefulWidget {
-  MyRequest({Key? key}) : super(key: key);
-  static const routeName = '/myRequestScreen';
+class PoliceRequest extends StatefulWidget {
+  static const routeName = '/PoliceRequest';
+
+  const PoliceRequest({Key? key}) : super(key: key);
+
   @override
-  _MyRequestState createState() => _MyRequestState();
+  _PoliceRequestState createState() => _PoliceRequestState();
 }
 
-class _MyRequestState extends State<MyRequest> {
+class _PoliceRequestState extends State<PoliceRequest> {
   Logger logger = Logger();
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   User? user = FirebaseAuth.instance.currentUser;
@@ -22,20 +25,7 @@ class _MyRequestState extends State<MyRequest> {
   String uid = "";
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    Stream<QuerySnapshot> ambulanceRequestStream = FirebaseFirestore.instance
-        .collection("ambulance-requests")
-        .where('owner', isEqualTo: user!.uid)
-        .snapshots();
-    Stream<QuerySnapshot> fireRequestStream = FirebaseFirestore.instance
-        .collection("fire-fighter-request")
-        .where('owner', isEqualTo: user!.uid)
-        .snapshots();
     Stream<QuerySnapshot> policeRequestStream = FirebaseFirestore.instance
         .collection("police-requests")
         .where('owner', isEqualTo: user!.uid)
@@ -56,10 +46,10 @@ class _MyRequestState extends State<MyRequest> {
             );
           },
         ),
-        title: const Text("My Request"),
+        title: const Text("My Police Request"),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: ambulanceRequestStream,
+        stream: policeRequestStream,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           //TO DO
           if (snapshot.hasError) {
@@ -161,7 +151,7 @@ class _MyRequestState extends State<MyRequest> {
                         height: 40,
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             IconButton(
                               icon: const Icon(
@@ -172,7 +162,7 @@ class _MyRequestState extends State<MyRequest> {
                               onPressed: () async {
                                 final CollectionReference requestCollection =
                                     FirebaseFirestore.instance
-                                        .collection('ambulance-requests');
+                                        .collection('police-requests');
                                 requestCollection.doc(uid).delete();
                               },
                             ),
@@ -199,5 +189,20 @@ class _MyRequestState extends State<MyRequest> {
         },
       ),
     );
+  }
+
+  final CollectionReference requestCollection =
+      FirebaseFirestore.instance.collection('police-requests');
+
+  Future<void> deleteRequest() async {
+    await requestCollection.doc(uid).delete().whenComplete(
+          () => Fluttertoast.showToast(
+              msg: 'No user found for that email.',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              textColor: Colors.grey,
+              fontSize: 16.0),
+        );
   }
 }

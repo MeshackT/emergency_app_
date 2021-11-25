@@ -1,3 +1,4 @@
+import 'package:afpemergencyapplication/RequestAndHistory/PoliceRequest.dart';
 import 'package:afpemergencyapplication/models/GetLocation.dart';
 import 'package:afpemergencyapplication/models/UserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -255,7 +256,7 @@ class _PoliceScreenState extends State<PoliceScreen> {
                                       }
                                       setState(() {
                                         address.text =
-                                            getLocation.currentAddress!;
+                                        getLocation.currentAddress!;
                                       });
                                     },
                                     icon: const Icon(Icons.my_location),
@@ -284,7 +285,7 @@ class _PoliceScreenState extends State<PoliceScreen> {
                         // foregroundColor:
                         //     MaterialStateProperty.all<Color>(Colors.green),
                         shape:
-                            MaterialStateProperty.all<RoundedRectangleBorder>(
+                        MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(28.0),
                             side: const BorderSide(
@@ -343,26 +344,32 @@ class _PoliceScreenState extends State<PoliceScreen> {
 //     put data in the database         //
 // ///////////////////////////////////////
   CollectionReference users =
-      FirebaseFirestore.instance.collection('police-requests');
+  FirebaseFirestore.instance.collection('police-requests');
 
   Future<void> sendRequest() {
     // Call the user's CollectionReference to add a new user
     return users
         .add({
-          'uid': uid,
-          'email': email.text,
-          'phoneNumber': phoneNumber.text,
-          'emergencyTypeRequest': emergencyTypeRequest.text,
-          'fullName': fullName.text,
-          'address': address.text,
-          'owner': user?.uid,
-        })
+      'uid': uid,
+      'email': email.text,
+      'phoneNumber': phoneNumber.text,
+      'emergencyTypeRequest': emergencyTypeRequest.text,
+      'fullName': fullName.text,
+      'address': address.text,
+      'owner': user?.uid,
+    })
         .then(
-          (value) => Fluttertoast.showToast(msg: "Successfully requested"),
+          (value) => Fluttertoast.showToast(msg: "Successfully requested")
+              .whenComplete(() => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PoliceRequest(),
+                    ),
+                  )),
         )
         .catchError(
           (error) =>
-              Fluttertoast.showToast(msg: "failed to send details $error"),
-        );
+          Fluttertoast.showToast(msg: "failed to send details $error"),
+    );
   }
 }

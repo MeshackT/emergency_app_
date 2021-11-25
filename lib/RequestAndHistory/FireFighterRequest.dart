@@ -5,14 +5,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
-class MyRequest extends StatefulWidget {
-  MyRequest({Key? key}) : super(key: key);
-  static const routeName = '/myRequestScreen';
+class FireFighterRequest extends StatefulWidget {
+  const FireFighterRequest({Key? key}) : super(key: key);
+  static const routeName = '/fireRequestScreen';
+
   @override
-  _MyRequestState createState() => _MyRequestState();
+  _FireFighterRequestState createState() => _FireFighterRequestState();
 }
 
-class _MyRequestState extends State<MyRequest> {
+class _FireFighterRequestState extends State<FireFighterRequest> {
   Logger logger = Logger();
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   User? user = FirebaseAuth.instance.currentUser;
@@ -22,22 +23,9 @@ class _MyRequestState extends State<MyRequest> {
   String uid = "";
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    Stream<QuerySnapshot> ambulanceRequestStream = FirebaseFirestore.instance
-        .collection("ambulance-requests")
-        .where('owner', isEqualTo: user!.uid)
-        .snapshots();
     Stream<QuerySnapshot> fireRequestStream = FirebaseFirestore.instance
         .collection("fire-fighter-request")
-        .where('owner', isEqualTo: user!.uid)
-        .snapshots();
-    Stream<QuerySnapshot> policeRequestStream = FirebaseFirestore.instance
-        .collection("police-requests")
         .where('owner', isEqualTo: user!.uid)
         .snapshots();
 
@@ -59,7 +47,7 @@ class _MyRequestState extends State<MyRequest> {
         title: const Text("My Request"),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: ambulanceRequestStream,
+        stream: fireRequestStream,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           //TO DO
           if (snapshot.hasError) {
@@ -172,7 +160,7 @@ class _MyRequestState extends State<MyRequest> {
                               onPressed: () async {
                                 final CollectionReference requestCollection =
                                     FirebaseFirestore.instance
-                                        .collection('ambulance-requests');
+                                        .collection('fire-fighter-request');
                                 requestCollection.doc(uid).delete();
                               },
                             ),
