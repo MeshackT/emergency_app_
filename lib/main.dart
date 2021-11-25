@@ -10,6 +10,7 @@ import 'package:afpemergencyapplication/MainSreens/FireFighterScreen.dart';
 import 'package:afpemergencyapplication/MainSreens/HomeScreen.dart';
 import 'package:afpemergencyapplication/MainSreens/PoliceScreen.dart';
 import 'package:afpemergencyapplication/MainSreens/ThreeButtonsScreens.dart';
+import 'package:afpemergencyapplication/RequestAndHistory/MainAlertType.dart';
 import 'package:afpemergencyapplication/RequestAndHistory/MyHistory.dart';
 import 'package:afpemergencyapplication/RequestAndHistory/MyRequest.dart';
 import 'package:afpemergencyapplication/UserRequestHistoryScreen.dart';
@@ -52,6 +53,8 @@ Future main() async {
       MyRequest.routeName: (ctx) => MyRequest(),
       ////my request history
       MyHistory.routeName: (ctx) => MyHistory(),
+      //my alert button screens
+      MainAlertTypeScreen.routeName: (ctx) => const MainAlertTypeScreen(),
     },
 
     /// check if user is signed (Open Chat page ) if user is not signed in (open welcome page)

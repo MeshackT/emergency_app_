@@ -4,7 +4,7 @@ import 'package:afpemergencyapplication/MainSreens/AmbulanceScreen.dart';
 import 'package:afpemergencyapplication/MainSreens/FireFighterScreen.dart';
 import 'package:afpemergencyapplication/MainSreens/PoliceScreen.dart';
 import 'package:afpemergencyapplication/MainSreens/ThreeButtonsScreens.dart';
-import 'package:afpemergencyapplication/RequestAndHistory/MyRequest.dart';
+import 'package:afpemergencyapplication/RequestAndHistory/MainAlertType.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -69,7 +69,7 @@ class _EmergencyTypeState extends State<EmergencyType> {
                         width: 7,
                       ),
                       Text(
-                        "My Request",
+                        "My Requests",
                         style: TextStyle(
                             color: Colors.purple, fontFamily: "GaramondBold"),
                       ),
@@ -182,7 +182,7 @@ class _EmergencyTypeState extends State<EmergencyType> {
     switch (item) {
       case 0:
         Navigator.pushNamedAndRemoveUntil(
-            context, MyRequest.routeName, (route) => false);
+            context, MainAlertTypeScreen.routeName, (route) => false);
         break;
       case 1:
         Navigator.pushNamedAndRemoveUntil(

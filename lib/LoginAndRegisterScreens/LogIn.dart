@@ -4,8 +4,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:localstorage/localstorage.dart';
+import 'package:logger/logger.dart';
 
 import 'UserRegister.dart';
+
+final LocalStorage storage = LocalStorage('localstorage_app');
 
 class LogIn extends StatefulWidget {
   static const routeName = '/login';
@@ -18,6 +22,7 @@ class LogIn extends StatefulWidget {
 
 class _LogInState extends State<LogIn> {
   final GlobalKey<FormState> _formKey = GlobalKey();
+  Logger log = Logger();
 
   bool progressBar = false;
   bool passwordVisible = true;
@@ -281,19 +286,32 @@ class _LogInState extends State<LogIn> {
     );
   }
 
+  String name = "";
+  String info_name = "";
+  late String info;
+
   Future<User?> _userSignIn(String email, String password) async {
     final _auth = FirebaseAuth.instance;
+    User? user = FirebaseAuth.instance.currentUser;
 
     try {
       await _auth
           .signInWithEmailAndPassword(
               email: email.trim().toLowerCase(), password: password.trim())
           .then((uid) => {
+                print("information uid: " + user!.uid),
+                log.i(uid.user),
+
                 Fluttertoast.showToast(msg: "Login Success"),
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => EmergencyType()),
                     (route) => false),
+                // storage.setItem('uid', user.uid),
+                // info = json.encode({'uid': user.uid}),
+                // storage.setItem('info', info),
+
+                ////get the user
               });
     } on FirebaseAuthException catch (e) {
       //if user is not found then display this msg
@@ -326,4 +344,21 @@ class _LogInState extends State<LogIn> {
       }
     }
   }
+
+// void addItemsToLocalStorage() {
+//   storage.setItem('name', 'Abolfazl');
+//   storage.setItem('family', 'Roshanzamir');
+//
+//   final info = json.encode({'name': 'Darush', 'family': 'Roshanzami'});
+//   storage.setItem('info', info);
+// }
+//get user ID
+// void getitemFromLocalStorage() {
+//   final name = storage.getItem("info");
+//
+//   Map<String, dynamic> info = json.decode(name);
+//   final info_name = info['uid'];
+//   print("User key ID: $info_name");
+//   log.i("User Key ID: $info_name");
+// }
 }

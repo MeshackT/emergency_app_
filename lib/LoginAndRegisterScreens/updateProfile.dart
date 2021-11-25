@@ -383,7 +383,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
         'phoneNumber': phoneNumber.text,
         'address': address.text
       }).whenComplete(
-            () => Fluttertoast.showToast(
+        () => Fluttertoast.showToast(
             msg: 'Update Complete',
             toastLength: Toast.LENGTH_LONG,
             gravity: ToastGravity.BOTTOM,

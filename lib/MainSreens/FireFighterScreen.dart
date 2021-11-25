@@ -328,7 +328,7 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
 
     await firebaseFirestore
         .collection('users')
-    // .document((await FirebaseAuth.instance.currentUser()).uid)
+        // .document((await FirebaseAuth.instance.currentUser()).uid)
         .doc(user!.uid)
         .get()
         .then((value) {
@@ -351,11 +351,13 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
     // Call the user's CollectionReference to add a new user
     return users
         .add({
+          'uid': uid,
           'email': email.text,
           'phoneNumber': phoneNumber.text,
           'emergencyTypeRequest': emergencyTypeRequest.text,
           'fullName': fullName.text,
           'address': address.text,
+          'owner': user?.uid,
         })
         .then(
           (value) => Fluttertoast.showToast(msg: "Successfully requested"),

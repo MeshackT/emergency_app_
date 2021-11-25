@@ -14,6 +14,18 @@ class Request {
       this.fullName,
       this.address});
 
+  //getting data from the server
+  factory Request.fromMap(map) {
+    return Request(
+      uid: map['uid'],
+      email: map['email'],
+      phoneNumber: map['phoneNumber'],
+      fullName: map['fullName'],
+      // password: map['password'],
+      address: map['address'],
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'uid': uid,
@@ -23,6 +35,7 @@ class Request {
       'fullName': fullName,
       'address': address,
     };
+
     // CollectionReference users = FirebaseFirestore.instance.collection('users');
     // User? user = FirebaseAuth.instance.currentUser;
     //

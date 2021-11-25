@@ -259,7 +259,7 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                                       }
                                       setState(() {
                                         address.text =
-                                        getLocation.currentAddress!;
+                                            getLocation.currentAddress!;
                                       });
                                     },
                                     icon: const Icon(Icons.my_location),
@@ -283,23 +283,25 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                     child: ElevatedButton(
                       style: ButtonStyle(
                           backgroundColor:
-                          MaterialStateProperty.all(Colors.green),
+                              MaterialStateProperty.all(Colors.green),
                           padding: MaterialStateProperty.all<EdgeInsets>(
                               const EdgeInsets.all(15)),
                           // foregroundColor:
                           //     MaterialStateProperty.all<Color>(Colors.green),
                           shape:
-                          MaterialStateProperty.all<RoundedRectangleBorder>(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(28.0),
-                                  side: const BorderSide(
-                                      color: Colors.green)))),
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(28.0),
+                                      side: const BorderSide(
+                                          color: Colors.green)))),
                       onPressed: () async {
                         //Send this information to the database
                         setState(() {
                           showProgressBar = true;
                         });
-                        addUser().whenComplete(() => showProgressBar = false);
+                        addUser().whenComplete(
+                          () => showProgressBar = false,
+                        );
                       },
                       child: const Text(
                         "Request",
@@ -335,6 +337,7 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
         .get()
         .then((value) {
       setState(() {
+        // String uid = "";
         fullName.text = value.data()!['fullName'].toString();
         email.text = value.data()!['email'].toString();
         phoneNumber.text = value.data()!['phoneNumber'].toString();
@@ -350,7 +353,9 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
       FirebaseFirestore.instance.collection('ambulance-requests');
 
   Future<void> addUser() {
+    User? user = FirebaseAuth.instance.currentUser;
     // Call the user's CollectionReference to add a new user
+    // getitemFromLocalStorage();
     return users
         .add({
           'uid': uid,
@@ -359,6 +364,7 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
           'emergencyTypeRequest': emergencyTypeRequest.text,
           'fullName': fullName.text,
           'address': address.text,
+          'owner': user?.uid,
         })
         .then(
           (value) => Fluttertoast.showToast(msg: "Successfully requested"),
@@ -368,4 +374,13 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
               Fluttertoast.showToast(msg: "failed to send details $error"),
         );
   }
+
+// void getitemFromLocalStorage() {
+//   final name = storage.getItem("info");
+//
+//   Map<String, dynamic> info = json.decode(name);
+//   final info_name = info['uid'];
+//   print("User key ID: $info_name");
+//   log.i("User Key ID: $info_name");
+// }
 }
