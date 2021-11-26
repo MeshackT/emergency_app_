@@ -46,7 +46,7 @@ class _UserProfileState extends State<UserProfile> {
       appBar: AppBar(
         elevation: 0.0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_sharp),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.pushReplacementNamed(context, EmergencyType.routeName);
           },

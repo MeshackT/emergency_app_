@@ -18,11 +18,15 @@ class _MainAlertTypeScreenState extends State<MainAlertTypeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Alert Type"),
+        title: const Text(
+          "Alert Type",
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
         elevation: 0.0,
         backgroundColor: Colors.green,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios),
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
           onPressed: () {
             Navigator.push(
               context,
@@ -33,6 +37,7 @@ class _MainAlertTypeScreenState extends State<MainAlertTypeScreen> {
           },
         ),
       ),
+      backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -47,7 +52,7 @@ class _MainAlertTypeScreenState extends State<MainAlertTypeScreen> {
                 },
                 child: const Text(
                   "Ambulance",
-                  style: TextStyle(fontSize: 25),
+                  style: TextStyle(fontSize: 25, color: Colors.purple),
                 ),
               ),
             ),
@@ -63,7 +68,7 @@ class _MainAlertTypeScreenState extends State<MainAlertTypeScreen> {
                 },
                 child: const Text(
                   "Fire Fighter",
-                  style: TextStyle(fontSize: 25),
+                  style: TextStyle(fontSize: 25, color: Colors.purple),
                 ),
               ),
             ),
@@ -80,7 +85,7 @@ class _MainAlertTypeScreenState extends State<MainAlertTypeScreen> {
                 },
                 child: const Text(
                   "Police",
-                  style: TextStyle(fontSize: 25),
+                  style: TextStyle(fontSize: 25, color: Colors.purple),
                 ),
               ),
             ),

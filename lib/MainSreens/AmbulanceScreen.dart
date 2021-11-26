@@ -333,7 +333,7 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
 
     await firebaseFirestore
         .collection('users')
-    // .document((await FirebaseAuth.instance.currentUser()).uid)
+        // .document((await FirebaseAuth.instance.currentUser()).uid)
         .doc(user!.uid)
         .get()
         .then((value) {

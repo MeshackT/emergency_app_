@@ -15,7 +15,6 @@ import '../models/UserModel.dart';
 
 class UpdateProfile extends StatefulWidget {
   static const routeName = '/updateProfile';
-
   const UpdateProfile({Key? key}) : super(key: key);
 
   @override
@@ -43,6 +42,15 @@ class _UpdateProfileState extends State<UpdateProfile> {
     _getUserData();
   }
 
+  bool validationAndSave() {
+    final form = _formKey.currentState;
+    if (form!.validate()) {
+      form.save();
+      return false;
+    }
+    return true;
+  }
+
   //
   // late Position _currentPosition;
   // late String _currentAddress;
@@ -52,7 +60,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
       appBar: AppBar(
         elevation: 0.0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_sharp),
+          icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.pushReplacementNamed(context, UserProfile.routeName);
           },
@@ -354,14 +362,21 @@ class _UpdateProfileState extends State<UpdateProfile> {
         // .document((await FirebaseAuth.instance.currentUser()).uid)
         .doc(user!.uid)
         .get()
-        .then((value) {
-      setState(() {
-        fullName.text = value.data()!['fullName'].toString();
-        email.text = value.data()!['email'].toString();
-        phoneNumber.text = value.data()!['phoneNumber'].toString();
-        address.text = value.data()!['address'].toString();
-      });
-    });
+        .then(
+      (value) {
+        setState(
+          () {
+            const Center(
+              child: CircularProgressIndicator(),
+            );
+            fullName.text = value.data()!['fullName'].toString();
+            email.text = value.data()!['email'].toString();
+            phoneNumber.text = value.data()!['phoneNumber'].toString();
+            address.text = value.data()!['address'].toString();
+          },
+        );
+      },
+    );
   }
 
   ///////////////////////////////////////////

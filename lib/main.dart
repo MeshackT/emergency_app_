@@ -10,6 +10,7 @@ import 'package:afpemergencyapplication/MainSreens/FireFighterScreen.dart';
 import 'package:afpemergencyapplication/MainSreens/HomeScreen.dart';
 import 'package:afpemergencyapplication/MainSreens/PoliceScreen.dart';
 import 'package:afpemergencyapplication/MainSreens/ThreeButtonsScreens.dart';
+import 'package:afpemergencyapplication/RequestAndHistory/EditRequest.dart';
 import 'package:afpemergencyapplication/RequestAndHistory/FireFighterRequest.dart';
 import 'package:afpemergencyapplication/RequestAndHistory/MainAlertTypeScreen.dart';
 import 'package:afpemergencyapplication/RequestAndHistory/MyHistory.dart';
@@ -53,6 +54,8 @@ Future main() async {
           const UserRequestHistoryScreen(),
       ////my request screen
       MyHistory.routeName: (ctx) => MyHistory(),
+      //edit Request
+      EditRequest.routeName: (ctx) => const EditRequest(),
       //my alert button screens
       MyRequest.routeName: (ctx) => MyRequest(),
       MainAlertTypeScreen.routeName: (ctx) => const MainAlertTypeScreen(),

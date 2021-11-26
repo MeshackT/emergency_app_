@@ -39,6 +39,7 @@ class _ThreeButtonsScreenState extends State<ThreeButtonsScreen> {
             ),
             Center(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   //////////////////////Ambulance/////////////////////////////////////
                   Padding(

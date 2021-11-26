@@ -285,7 +285,7 @@ class _PoliceScreenState extends State<PoliceScreen> {
                         // foregroundColor:
                         //     MaterialStateProperty.all<Color>(Colors.green),
                         shape:
-                        MaterialStateProperty.all<RoundedRectangleBorder>(
+                            MaterialStateProperty.all<RoundedRectangleBorder>(
                           RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(28.0),
                             side: const BorderSide(

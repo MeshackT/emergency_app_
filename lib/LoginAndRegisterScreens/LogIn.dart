@@ -13,7 +13,6 @@ final LocalStorage storage = LocalStorage('localstorage_app');
 
 class LogIn extends StatefulWidget {
   static const routeName = '/login';
-
   const LogIn({Key? key}) : super(key: key);
 
   @override
@@ -198,11 +197,14 @@ class _LogInState extends State<LogIn> {
                                 if (_formKey.currentState!.validate()) {
                                   FocusScope.of(context).unfocus();
                                   setState(() {
-                                    progressBar = true;
+                                    const Center(
+                                      child: CircularProgressIndicator(
+                                        color: Colors.green,
+                                      ),
+                                    );
                                   });
                                   //get the user information
-                                  _userSignIn(email.text, password.text)
-                                      .whenComplete(() => progressBar = false);
+                                  _userSignIn(email.text, password.text);
                                 }
                               },
                               child: const Text(
@@ -286,10 +288,6 @@ class _LogInState extends State<LogIn> {
     );
   }
 
-  String name = "";
-  String info_name = "";
-  late String info;
-
   Future<User?> _userSignIn(String email, String password) async {
     final _auth = FirebaseAuth.instance;
     User? user = FirebaseAuth.instance.currentUser;
@@ -298,24 +296,26 @@ class _LogInState extends State<LogIn> {
       await _auth
           .signInWithEmailAndPassword(
               email: email.trim().toLowerCase(), password: password.trim())
-          .then((uid) => {
-                print("information uid: " + user!.uid),
-                log.i(uid.user),
-
+          .then((uid) =>
+      {
+                setState(
+                  () {
+                    const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  },
+                ),
+                log.i(user!.uid + " logged in"),
                 Fluttertoast.showToast(msg: "Login Success"),
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => EmergencyType()),
                     (route) => false),
-                // storage.setItem('uid', user.uid),
-                // info = json.encode({'uid': user.uid}),
-                // storage.setItem('info', info),
-
-                ////get the user
               });
     } on FirebaseAuthException catch (e) {
       //if user is not found then display this msg
       if (e.code == 'user-not-found') {
+        log.i("user not found!");
         Fluttertoast.showToast(
             msg: 'No user found for that email.',
             toastLength: Toast.LENGTH_SHORT,
@@ -323,14 +323,16 @@ class _LogInState extends State<LogIn> {
             timeInSecForIosWeb: 1,
             textColor: Colors.grey,
             fontSize: 16.0);
-
         setState(() {
-          progressBar = false;
+          const Center(
+            child: CircularProgressIndicator(),
+          );
         });
       } else if (e.code == 'wrong-password') {
         if (kDebugMode) {
           print('Wrong password provided for that user.');
         }
+        log.i("wrong password");
         Fluttertoast.showToast(
             msg: 'Wrong password provided for that user.',
             toastLength: Toast.LENGTH_SHORT,
@@ -339,7 +341,9 @@ class _LogInState extends State<LogIn> {
             textColor: Colors.grey,
             fontSize: 16.0);
         setState(() {
-          progressBar = false;
+          const Center(
+            child: CircularProgressIndicator(),
+          );
         });
       }
     }

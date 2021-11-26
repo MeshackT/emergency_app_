@@ -1,3 +1,4 @@
+import 'package:afpemergencyapplication/MainSreens/HomeScreen.dart';
 import 'package:afpemergencyapplication/RequestAndHistory/MainAlertTypeScreen.dart';
 import 'package:afpemergencyapplication/models/UserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -33,6 +34,8 @@ class _FireFighterRequestState extends State<FireFighterRequest> {
       appBar: AppBar(
         backgroundColor: Colors.green,
         elevation: 0.0,
+        centerTitle: true,
+        title: const Text("My Request"),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
@@ -44,7 +47,19 @@ class _FireFighterRequestState extends State<FireFighterRequest> {
             );
           },
         ),
-        title: const Text("My Request"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.house),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EmergencyType(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: fireRequestStream,
@@ -75,7 +90,7 @@ class _FireFighterRequestState extends State<FireFighterRequest> {
           return ListView(
             children: snapshot.data!.docs.map((DocumentSnapshot document) {
               Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
+              document.data()! as Map<String, dynamic>;
               return InkWell(
                 onTap: () {},
                 child: Card(
@@ -159,8 +174,8 @@ class _FireFighterRequestState extends State<FireFighterRequest> {
                               ),
                               onPressed: () async {
                                 final CollectionReference requestCollection =
-                                    FirebaseFirestore.instance
-                                        .collection('fire-fighter-request');
+                                FirebaseFirestore.instance
+                                    .collection('fire-fighter-request');
                                 requestCollection.doc(uid).delete();
                               },
                             ),

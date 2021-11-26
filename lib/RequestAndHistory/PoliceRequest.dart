@@ -1,3 +1,4 @@
+import 'package:afpemergencyapplication/MainSreens/HomeScreen.dart';
 import 'package:afpemergencyapplication/RequestAndHistory/MainAlertTypeScreen.dart';
 import 'package:afpemergencyapplication/models/UserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -35,6 +36,8 @@ class _PoliceRequestState extends State<PoliceRequest> {
       appBar: AppBar(
         backgroundColor: Colors.green,
         elevation: 0.0,
+        title: const Text("My Police Request"),
+        centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
@@ -46,7 +49,19 @@ class _PoliceRequestState extends State<PoliceRequest> {
             );
           },
         ),
-        title: const Text("My Police Request"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.house),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EmergencyType(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: policeRequestStream,
@@ -77,7 +92,7 @@ class _PoliceRequestState extends State<PoliceRequest> {
           return ListView(
             children: snapshot.data!.docs.map((DocumentSnapshot document) {
               Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
+              document.data()! as Map<String, dynamic>;
               return InkWell(
                 onTap: () {},
                 child: Card(
@@ -211,17 +226,17 @@ class _PoliceRequestState extends State<PoliceRequest> {
   }
 
   final CollectionReference requestCollection =
-      FirebaseFirestore.instance.collection('police-requests');
+  FirebaseFirestore.instance.collection('police-requests');
 
   Future<void> deleteRequest() async {
     await requestCollection.doc(uid).delete().whenComplete(
           () => Fluttertoast.showToast(
-              msg: 'No user found for that email.',
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              textColor: Colors.grey,
-              fontSize: 16.0),
-        );
+          msg: 'No user found for that email.',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          textColor: Colors.grey,
+          fontSize: 16.0),
+    );
   }
 }

@@ -7,12 +7,11 @@ import 'package:afpemergencyapplication/MainSreens/ThreeButtonsScreens.dart';
 import 'package:afpemergencyapplication/RequestAndHistory/MainAlertTypeScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 
 class EmergencyType extends StatefulWidget {
   EmergencyType({Key? key}) : super(key: key);
   static const routeName = '/emergencyHomeScreen';
-  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  User? user = FirebaseAuth.instance.currentUser;
 
   @override
   State<EmergencyType> createState() => _EmergencyTypeState();
@@ -20,6 +19,9 @@ class EmergencyType extends StatefulWidget {
 
 class _EmergencyTypeState extends State<EmergencyType> {
   int _currentIndex = 0;
+  Logger log = Logger();
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  User? user = FirebaseAuth.instance.currentUser;
 
   final List<Widget> _tabs = const [
     ThreeButtonsScreen(),
@@ -188,7 +190,7 @@ class _EmergencyTypeState extends State<EmergencyType> {
       case 1:
         Navigator.pushNamedAndRemoveUntil(
             context, UserProfile.routeName, (route) => false);
-        print("Privacy Clicked");
+        log.i("user ID " + user!.uid);
         break;
       case 2:
         print("User Logged out");
