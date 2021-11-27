@@ -90,7 +90,7 @@ class _FireFighterRequestState extends State<FireFighterRequest> {
           return ListView(
             children: snapshot.data!.docs.map((DocumentSnapshot document) {
               Map<String, dynamic> data =
-              document.data()! as Map<String, dynamic>;
+                  document.data()! as Map<String, dynamic>;
               return InkWell(
                 onTap: () {},
                 child: Card(
@@ -174,8 +174,8 @@ class _FireFighterRequestState extends State<FireFighterRequest> {
                               ),
                               onPressed: () async {
                                 final CollectionReference requestCollection =
-                                FirebaseFirestore.instance
-                                    .collection('fire-fighter-request');
+                                    FirebaseFirestore.instance
+                                        .collection('fire-fighter-request');
                                 requestCollection.doc(uid).delete();
                               },
                             ),

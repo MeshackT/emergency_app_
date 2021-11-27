@@ -296,8 +296,7 @@ class _LogInState extends State<LogIn> {
       await _auth
           .signInWithEmailAndPassword(
               email: email.trim().toLowerCase(), password: password.trim())
-          .then((uid) =>
-      {
+          .then((uid) => {
                 setState(
                   () {
                     const Center(

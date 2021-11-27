@@ -92,7 +92,7 @@ class _PoliceRequestState extends State<PoliceRequest> {
           return ListView(
             children: snapshot.data!.docs.map((DocumentSnapshot document) {
               Map<String, dynamic> data =
-              document.data()! as Map<String, dynamic>;
+                  document.data()! as Map<String, dynamic>;
               return InkWell(
                 onTap: () {},
                 child: Card(
@@ -226,17 +226,17 @@ class _PoliceRequestState extends State<PoliceRequest> {
   }
 
   final CollectionReference requestCollection =
-  FirebaseFirestore.instance.collection('police-requests');
+      FirebaseFirestore.instance.collection('police-requests');
 
   Future<void> deleteRequest() async {
     await requestCollection.doc(uid).delete().whenComplete(
           () => Fluttertoast.showToast(
-          msg: 'No user found for that email.',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          textColor: Colors.grey,
-          fontSize: 16.0),
-    );
+              msg: 'No user found for that email.',
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              textColor: Colors.grey,
+              fontSize: 16.0),
+        );
   }
 }

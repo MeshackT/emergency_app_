@@ -4,6 +4,7 @@ import 'package:afpemergencyapplication/RequestAndHistory/MainAlertTypeScreen.da
 import 'package:afpemergencyapplication/models/UserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
@@ -83,157 +84,194 @@ class _MyRequestState extends State<MyRequest> {
           if (snapshot.hasError) {
             return Stack(
               children: const [
-                Text('Something went wrong'),
                 Center(
                   child: CircularProgressIndicator(),
                 ),
+                Text(
+                  'Something went wrong',
+                  style: TextStyle(color: Colors.purple, fontSize: 16),
+                ),
               ],
             );
-          }
-
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Stack(
-              children: const [
-                Text('Loading information'),
-                Center(child: CircularProgressIndicator()),
-              ],
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  CircularProgressIndicator(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    'Loading information',
+                    style: TextStyle(color: Colors.purple, fontSize: 16),
+                  ),
+                ],
+              ),
             );
-          }
+          } else if (snapshot.data!.size == 0) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  CircularProgressIndicator(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "No data found",
+                    style: TextStyle(color: Colors.purple, fontSize: 16),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "Create a request to see you My Request",
+                    style: TextStyle(color: Colors.purple, fontSize: 16),
+                  ),
+                ],
+              ),
+            );
+          } else if (snapshot.hasData == true) {
+            return ListView.builder(
+              itemCount: snapshot.data!.size,
+              itemBuilder: (context, index) {
+                DocumentSnapshot data = snapshot.data!.docs[index];
 
-          return ListView(
-            children: snapshot.data!.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
-              return Card(
-                child: Column(
-                  children: [
-                    ListTile(
-                      title: Text(
-                        data['fullName'],
-                        style: const TextStyle(color: Colors.green),
-                      ),
-                      subtitle: ExpansionTile(
-                        title: const Text(
-                          "More",
-                          style: TextStyle(fontSize: 14, color: Colors.red),
+                return Card(
+                  child: Column(
+                    children: [
+                      ListTile(
+                        title: Text(
+                          data['fullName'],
+                          style: const TextStyle(color: Colors.green),
                         ),
-                        children: [
-                          const Text(
-                            "EM Type: ",
-                            style: TextStyle(
-                              color: Colors.grey,
-                            ),
+                        subtitle: ExpansionTile(
+                          title: const Text(
+                            "More",
+                            style: TextStyle(fontSize: 14, color: Colors.red),
                           ),
-                          Text(
-                            data['emergencyTypeRequest'],
-                            style: const TextStyle(
-                              color: Colors.purple,
-                            ),
-                          ),
-                          const Text("Phone Number"),
-                          Text(
-                            data["phoneNumber"],
-                            style: const TextStyle(
-                              letterSpacing: 3,
-                              color: Colors.purple,
-                            ),
-                          ),
-                        ],
-                      ),
-                      // Text(
-                      //   data['emergencyTypeRequest'],
-                      //   style: const TextStyle(color: Colors.red),
-                      // ),
-                      leading: CircleAvatar(
-                        backgroundColor: Colors.grey,
-                        child: Text(
-                          data['fullName'][0],
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ),
-                      trailing: SizedBox(
-                        width: MediaQuery.of(context).size.width / 3,
-                        height: MediaQuery.of(context).size.height + 50,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
                           children: [
                             const Text(
-                              "Address",
-                              style: TextStyle(color: Colors.green),
+                              "EM Type: ",
+                              style: TextStyle(
+                                color: Colors.grey,
+                              ),
                             ),
                             Text(
-                              data['address'],
+                              data['emergencyTypeRequest'],
                               style: const TextStyle(
-                                  color: Colors.grey, fontSize: 10),
-                              textAlign: TextAlign.end,
+                                color: Colors.purple,
+                              ),
+                            ),
+                            const Text("Phone Number"),
+                            Text(
+                              data["phoneNumber"],
+                              style: const TextStyle(
+                                letterSpacing: 3,
+                                color: Colors.purple,
+                              ),
+                            ),
+                          ],
+                        ),
+                        // Text(
+                        //   data['emergencyTypeRequest'],
+                        //   style: const TextStyle(color: Colors.red),
+                        // ),
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.grey,
+                          child: Text(
+                            data['fullName'][0],
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                        trailing: SizedBox(
+                          width: MediaQuery.of(context).size.width / 3,
+                          height: MediaQuery.of(context).size.height + 50,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              const Text(
+                                "Address",
+                                style: TextStyle(color: Colors.green),
+                              ),
+                              Text(
+                                data['address'],
+                                style: const TextStyle(
+                                    color: Colors.grey, fontSize: 10),
+                                textAlign: TextAlign.end,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 40,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            IconButton(
+                              icon: const Icon(
+                                Icons.delete,
+                                size: 20,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () async {
+                                setState(() {
+                                  const CircularProgressIndicator();
+                                });
+                                try {
+                                  FirebaseFirestore.instance
+                                      .collection('ambulance-requests')
+                                      .doc(data.id)
+                                      .delete()
+                                      .then(
+                                        (value) => logger.i(data.id),
+                                      );
+                                  Fluttertoast.showToast(
+                                      msg: 'Request Deleted',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      textColor: Colors.grey,
+                                      fontSize: 16.0);
+                                } catch (error) {
+                                  logger.i("failed $error ");
+                                  Fluttertoast.showToast(
+                                      msg: 'Request failed to Deleted $error',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      textColor: Colors.grey,
+                                      fontSize: 16.0);
+                                }
+                              },
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            IconButton(
+                              icon: const Icon(
+                                Icons.edit,
+                                size: 20,
+                                color: Colors.grey,
+                              ),
+                              onPressed: () {
+                                Navigator.pushNamedAndRemoveUntil(context,
+                                    EditRequest.routeName, (route) => false);
+                              },
                             ),
                           ],
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 40,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.delete,
-                              size: 20,
-                              color: Colors.grey,
-                            ),
-                            onPressed: () async {
-                              setState(() {
-                                const CircularProgressIndicator();
-                              });
-                              try {
-                                FirebaseFirestore.instance
-                                    .collection('ambulance-requests')
-                                    .doc(document.id)
-                                    .delete()
-                                    .then((value) => logger.i(document.id));
-                                Fluttertoast.showToast(
-                                    msg: 'Request Deleted',
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.BOTTOM,
-                                    timeInSecForIosWeb: 1,
-                                    textColor: Colors.grey,
-                                    fontSize: 16.0);
-                              } catch (error) {
-                                logger.i("failed $error ");
-                                Fluttertoast.showToast(
-                                    msg: 'Request failed to Deleted $error',
-                                    toastLength: Toast.LENGTH_SHORT,
-                                    gravity: ToastGravity.BOTTOM,
-                                    timeInSecForIosWeb: 1,
-                                    textColor: Colors.grey,
-                                    fontSize: 16.0);
-                              }
-                            },
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.edit,
-                              size: 20,
-                              color: Colors.grey,
-                            ),
-                            onPressed: () {
-                              Navigator.pushNamedAndRemoveUntil(context,
-                                  EditRequest.routeName, (route) => false);
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
-          );
+                    ],
+                  ),
+                );
+              },
+            );
+          }
+          return const Text("No data is Found");
         },
       ),
     );
