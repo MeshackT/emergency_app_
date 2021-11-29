@@ -298,11 +298,9 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                       onPressed: () async {
                         //Send this information to the database
                         setState(() {
-                          showProgressBar = true;
+                          CircularProgressIndicator();
                         });
-                        addUser().whenComplete(
-                          () => showProgressBar = false,
-                        );
+                        addRequest();
                       },
                       child: const Text(
                         "Request",
@@ -353,7 +351,7 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
   CollectionReference users =
       FirebaseFirestore.instance.collection('ambulance-requests');
 
-  Future<void> addUser() {
+  Future<void> addRequest() {
     User? user = FirebaseAuth.instance.currentUser;
     // Call the user's CollectionReference to add a new user
     // getitemFromLocalStorage();

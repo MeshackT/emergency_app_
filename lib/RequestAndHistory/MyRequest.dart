@@ -1,10 +1,9 @@
+import 'package:afpemergencyapplication/EditRequests/EditRequest.dart';
 import 'package:afpemergencyapplication/MainSreens/HomeScreen.dart';
-import 'package:afpemergencyapplication/RequestAndHistory/EditRequest.dart';
 import 'package:afpemergencyapplication/RequestAndHistory/MainAlertTypeScreen.dart';
 import 'package:afpemergencyapplication/models/UserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
@@ -50,7 +49,7 @@ class _MyRequestState extends State<MyRequest> {
       appBar: AppBar(
         backgroundColor: Colors.green,
         elevation: 0.0,
-        title: const Text("My Request"),
+        title: const Text("My Ambulance Request"),
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
@@ -228,7 +227,7 @@ class _MyRequestState extends State<MyRequest> {
                                       .delete()
                                       .then(
                                         (value) => logger.i(data.id),
-                                      );
+                                  );
                                   Fluttertoast.showToast(
                                       msg: 'Request Deleted',
                                       toastLength: Toast.LENGTH_SHORT,

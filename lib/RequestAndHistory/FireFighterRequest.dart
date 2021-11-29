@@ -1,9 +1,11 @@
+import 'package:afpemergencyapplication/EditRequests/EditFireFighterRequest.dart';
 import 'package:afpemergencyapplication/MainSreens/HomeScreen.dart';
 import 'package:afpemergencyapplication/RequestAndHistory/MainAlertTypeScreen.dart';
 import 'package:afpemergencyapplication/models/UserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
 
 class FireFighterRequest extends StatefulWidget {
@@ -35,7 +37,7 @@ class _FireFighterRequestState extends State<FireFighterRequest> {
         backgroundColor: Colors.green,
         elevation: 0.0,
         centerTitle: true,
-        title: const Text("My Request"),
+        title: const Text("My Fire Request"),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
@@ -66,34 +68,63 @@ class _FireFighterRequestState extends State<FireFighterRequest> {
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           //TO DO
           if (snapshot.hasError) {
+            return Stack(
+              children: const [
+                Center(
+                  child: CircularProgressIndicator(),
+                ),
+                Text(
+                  'Something went wrong',
+                  style: TextStyle(color: Colors.purple, fontSize: 16),
+                ),
+              ],
+            );
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: Stack(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
-                  Text('Something went wrong'),
                   CircularProgressIndicator(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    'Loading information',
+                    style: TextStyle(color: Colors.purple, fontSize: 16),
+                  ),
                 ],
               ),
             );
-          }
-
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          } else if (snapshot.data!.size == 0) {
             return Center(
-              child: Stack(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
-                  Text('Loading information'),
                   CircularProgressIndicator(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "No data found",
+                    style: TextStyle(color: Colors.purple, fontSize: 16),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "Create a request to see you My Request",
+                    style: TextStyle(color: Colors.purple, fontSize: 16),
+                  ),
                 ],
               ),
             );
-          }
+          } else if (snapshot.hasData == true) {
+            return ListView.builder(
+              itemCount: snapshot.data!.size,
+              itemBuilder: (context, index) {
+                DocumentSnapshot data = snapshot.data!.docs[index];
 
-          return ListView(
-            children: snapshot.data!.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
-              return InkWell(
-                onTap: () {},
-                child: Card(
+                return Card(
                   child: Column(
                     children: [
                       ListTile(
@@ -173,10 +204,34 @@ class _FireFighterRequestState extends State<FireFighterRequest> {
                                 color: Colors.grey,
                               ),
                               onPressed: () async {
-                                final CollectionReference requestCollection =
-                                    FirebaseFirestore.instance
-                                        .collection('fire-fighter-request');
-                                requestCollection.doc(uid).delete();
+                                setState(() {
+                                  const CircularProgressIndicator();
+                                });
+                                try {
+                                  FirebaseFirestore.instance
+                                      .collection('fire-fighter-request')
+                                      .doc(data.id)
+                                      .delete()
+                                      .then(
+                                        (value) => logger.i(data.id),
+                                      );
+                                  Fluttertoast.showToast(
+                                      msg: 'Request Deleted',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      textColor: Colors.grey,
+                                      fontSize: 16.0);
+                                } catch (error) {
+                                  logger.i("failed $error ");
+                                  Fluttertoast.showToast(
+                                      msg: 'Request failed to Deleted $error',
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      textColor: Colors.grey,
+                                      fontSize: 16.0);
+                                }
                               },
                             ),
                             const SizedBox(
@@ -188,17 +243,23 @@ class _FireFighterRequestState extends State<FireFighterRequest> {
                                 size: 20,
                                 color: Colors.grey,
                               ),
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.pushNamedAndRemoveUntil(
+                                    context,
+                                    EditFireFighterRequest.routeName,
+                                    (route) => false);
+                              },
                             ),
                           ],
                         ),
                       ),
                     ],
                   ),
-                ),
-              );
-            }).toList(),
-          );
+                );
+              },
+            );
+          }
+          return const Text("No data is Found");
         },
       ),
     );

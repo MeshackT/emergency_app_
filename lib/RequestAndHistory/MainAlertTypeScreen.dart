@@ -38,58 +38,109 @@ class _MainAlertTypeScreenState extends State<MainAlertTypeScreen> {
         ),
       ),
       backgroundColor: Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Container(
-              height: 100,
-              child: TextButton(
-                onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, MyRequest.routeName, (route) => false);
-                },
-                child: const Text(
-                  "Ambulance",
-                  style: TextStyle(fontSize: 25, color: Colors.purple),
+      body: SingleChildScrollView(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 10, right: 10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(
+                  height: 20,
                 ),
-              ),
-            ),
-            Container(
-              height: 100,
-              child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => FireFighterRequest()),
-                  );
-                },
-                child: const Text(
-                  "Fire Fighter",
-                  style: TextStyle(fontSize: 25, color: Colors.purple),
-                ),
-              ),
-            ),
-            Container(
-              height: 100,
-              child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const PoliceRequest(),
+                const Padding(
+                  padding: EdgeInsets.only(top: 2.0, bottom: 5.0),
+                  child: SizedBox(
+                    child: Icon(
+                      Icons.add_alert,
+                      color: Colors.grey,
+                      size: 40,
                     ),
-                  );
-                },
-                child: const Text(
-                  "Police",
-                  style: TextStyle(fontSize: 25, color: Colors.purple),
+                  ),
                 ),
-              ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  height: 100,
+                  child: TextButton(
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(28.0),
+                          side: const BorderSide(color: Colors.purple),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, MyRequest.routeName, (route) => false);
+                    },
+                    child: const Text(
+                      "Ambulance",
+                      style: TextStyle(fontSize: 25, color: Colors.purple),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                  height: 100,
+                  child: TextButton(
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(28.0),
+                          side: const BorderSide(color: Colors.purple),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const FireFighterRequest()),
+                      );
+                    },
+                    child: const Text(
+                      "Fire Fighter",
+                      style: TextStyle(fontSize: 25, color: Colors.purple),
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                SizedBox(
+                  height: 100,
+                  child: TextButton(
+                    style: ButtonStyle(
+                      shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(28.0),
+                          side: const BorderSide(color: Colors.purple),
+                        ),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PoliceRequest(),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      "Police",
+                      style: TextStyle(fontSize: 25, color: Colors.purple),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

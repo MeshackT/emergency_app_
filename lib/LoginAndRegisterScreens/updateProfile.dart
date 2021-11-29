@@ -66,7 +66,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
           },
         ),
         backgroundColor: Colors.green,
-        title: const Text('Profile'),
+        title: const Text('Edit My Profile'),
       ),
       backgroundColor: Colors.white,
       body: SingleChildScrollView(

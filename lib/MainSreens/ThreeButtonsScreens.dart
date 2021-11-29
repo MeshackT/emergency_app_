@@ -26,10 +26,10 @@ class _ThreeButtonsScreenState extends State<ThreeButtonsScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Padding(
-              padding: EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 40.0),
+              padding: EdgeInsets.fromLTRB(0.0, 20.0, 0.0, 10.0),
               child: Center(
                 child: Text(
-                  "Click-To-Call",
+                  "Tap-To-Call",
                   style: TextStyle(
                     color: Colors.purple,
                     fontSize: 20,

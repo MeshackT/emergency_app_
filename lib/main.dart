@@ -1,5 +1,8 @@
 import 'dart:async';
 
+import 'package:afpemergencyapplication/EditRequests/EditFireFighterRequest.dart';
+import 'package:afpemergencyapplication/EditRequests/EditPoliceRequest.dart';
+import 'package:afpemergencyapplication/EditRequests/EditRequest.dart';
 import 'package:afpemergencyapplication/LoginAndRegisterScreens/LogIn.dart';
 import 'package:afpemergencyapplication/LoginAndRegisterScreens/PasswordReset.dart';
 import 'package:afpemergencyapplication/LoginAndRegisterScreens/UserProfile.dart';
@@ -10,7 +13,6 @@ import 'package:afpemergencyapplication/MainSreens/FireFighterScreen.dart';
 import 'package:afpemergencyapplication/MainSreens/HomeScreen.dart';
 import 'package:afpemergencyapplication/MainSreens/PoliceScreen.dart';
 import 'package:afpemergencyapplication/MainSreens/ThreeButtonsScreens.dart';
-import 'package:afpemergencyapplication/RequestAndHistory/EditRequest.dart';
 import 'package:afpemergencyapplication/RequestAndHistory/FireFighterRequest.dart';
 import 'package:afpemergencyapplication/RequestAndHistory/MainAlertTypeScreen.dart';
 import 'package:afpemergencyapplication/RequestAndHistory/MyHistory.dart';
@@ -54,10 +56,13 @@ Future main() async {
           const UserRequestHistoryScreen(),
       ////my request screen
       MyHistory.routeName: (ctx) => MyHistory(),
-      //edit Request
+      //edit your Requests
       EditRequest.routeName: (ctx) => const EditRequest(),
+      EditPoliceRequest.route: (ctx) => const EditPoliceRequest(),
+      EditFireFighterRequest.routeName: (ctx) => const EditFireFighterRequest(),
+      // EditPoliceRequest.routename: (ctx) => const EditPoliceRequest(),
       //my alert button screens
-      MyRequest.routeName: (ctx) => MyRequest(),
+      MyRequest.routeName: (ctx) => const MyRequest(),
       MainAlertTypeScreen.routeName: (ctx) => const MainAlertTypeScreen(),
       FireFighterRequest.routeName: (ctx) => const FireFighterRequest(),
       PoliceRequest.routeName: (ctx) => const PoliceRequest(),

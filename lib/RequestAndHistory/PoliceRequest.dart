@@ -1,6 +1,6 @@
+import 'package:afpemergencyapplication/EditRequests/EditPoliceRequest.dart';
 import 'package:afpemergencyapplication/MainSreens/HomeScreen.dart';
 import 'package:afpemergencyapplication/RequestAndHistory/MainAlertTypeScreen.dart';
-import 'package:afpemergencyapplication/models/UserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -20,9 +20,6 @@ class _PoliceRequestState extends State<PoliceRequest> {
   Logger logger = Logger();
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   User? user = FirebaseAuth.instance.currentUser;
-
-  UserModel userModel = UserModel();
-  List requestList = [];
   String uid = "";
 
   @override
@@ -68,34 +65,63 @@ class _PoliceRequestState extends State<PoliceRequest> {
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           //TO DO
           if (snapshot.hasError) {
+            return Stack(
+              children: const [
+                Center(
+                  child: CircularProgressIndicator(),
+                ),
+                Text(
+                  'Something went wrong',
+                  style: TextStyle(color: Colors.purple, fontSize: 16),
+                ),
+              ],
+            );
+          } else if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(
-              child: Stack(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
-                  Text('Something went wrong'),
                   CircularProgressIndicator(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    'Loading information',
+                    style: TextStyle(color: Colors.purple, fontSize: 16),
+                  ),
                 ],
               ),
             );
-          }
-
-          if (snapshot.connectionState == ConnectionState.waiting) {
+          } else if (snapshot.data!.size == 0) {
             return Center(
-              child: Stack(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: const [
-                  Text('Loading information'),
                   CircularProgressIndicator(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "No data found",
+                    style: TextStyle(color: Colors.purple, fontSize: 16),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "Create a request to see you My Request",
+                    style: TextStyle(color: Colors.purple, fontSize: 16),
+                  ),
                 ],
               ),
             );
-          }
+          } else if (snapshot.hasData == true) {
+            return ListView.builder(
+              itemCount: snapshot.data!.size,
+              itemBuilder: (context, index) {
+                DocumentSnapshot data = snapshot.data!.docs[index];
 
-          return ListView(
-            children: snapshot.data!.docs.map((DocumentSnapshot document) {
-              Map<String, dynamic> data =
-                  document.data()! as Map<String, dynamic>;
-              return InkWell(
-                onTap: () {},
-                child: Card(
+                return Card(
                   child: Column(
                     children: [
                       ListTile(
@@ -166,7 +192,7 @@ class _PoliceRequestState extends State<PoliceRequest> {
                         height: 40,
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             IconButton(
                               icon: const Icon(
@@ -175,12 +201,17 @@ class _PoliceRequestState extends State<PoliceRequest> {
                                 color: Colors.grey,
                               ),
                               onPressed: () async {
+                                setState(() {
+                                  const CircularProgressIndicator();
+                                });
                                 try {
                                   FirebaseFirestore.instance
                                       .collection('police-requests')
-                                      .doc(document.id)
+                                      .doc(data.id)
                                       .delete()
-                                      .then((value) => logger.i(document.id));
+                                      .then(
+                                        (value) => logger.i(data.id),
+                                      );
                                   Fluttertoast.showToast(
                                       msg: 'Request Deleted',
                                       toastLength: Toast.LENGTH_SHORT,
@@ -209,34 +240,23 @@ class _PoliceRequestState extends State<PoliceRequest> {
                                 size: 20,
                                 color: Colors.grey,
                               ),
-                              onPressed: () async {},
+                              onPressed: () {
+                                Navigator.pushNamedAndRemoveUntil(context,
+                                    EditPoliceRequest.route, (route) => false);
+                              },
                             ),
                           ],
                         ),
                       ),
                     ],
                   ),
-                ),
-              );
-            }).toList(),
-          );
+                );
+              },
+            );
+          }
+          return const Text("No data is Found");
         },
       ),
     );
-  }
-
-  final CollectionReference requestCollection =
-      FirebaseFirestore.instance.collection('police-requests');
-
-  Future<void> deleteRequest() async {
-    await requestCollection.doc(uid).delete().whenComplete(
-          () => Fluttertoast.showToast(
-              msg: 'No user found for that email.',
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              textColor: Colors.grey,
-              fontSize: 16.0),
-        );
   }
 }

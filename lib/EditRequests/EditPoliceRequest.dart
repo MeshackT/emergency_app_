@@ -1,26 +1,21 @@
-import 'package:afpemergencyapplication/RequestAndHistory/MyRequest.dart';
-import """
-package:afpemergencyapplication/models/GetLocation.dart""";
-import '''
-package:cloud_firestore/cloud_firestore.dart''';
+import 'package:afpemergencyapplication/RequestAndHistory/PoliceRequest.dart';
+import 'package:afpemergencyapplication/models/GetLocation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import '''
-package:fluttertoast/fluttertoast.dart''';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
 
-class EditRequest extends StatefulWidget {
-  static const routeName = '/editRequest';
-
-  const EditRequest({Key? key}) : super(key: key);
+class EditPoliceRequest extends StatefulWidget {
+  const EditPoliceRequest({Key? key}) : super(key: key);
+  static const route = '/editPoliceRequest';
 
   @override
-  _EditRequestState createState() => _EditRequestState();
+  _EditPoliceRequestState createState() => _EditPoliceRequestState();
 }
 
-class _EditRequestState extends State<EditRequest> {
+class _EditPoliceRequestState extends State<EditPoliceRequest> {
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   User? user = FirebaseAuth.instance.currentUser;
 
@@ -38,15 +33,12 @@ class _EditRequestState extends State<EditRequest> {
   @override
   void initState() {
     super.initState();
-    _getRequestData();
   }
-
-  ///////////////////////////////////////////
 
   @override
   Widget build(BuildContext context) {
-    Stream<QuerySnapshot> ambulanceRequestStream =
-        FirebaseFirestore.instance.collection("ambulance-requests").snapshots();
+    Stream<QuerySnapshot> policeRequestStream =
+        FirebaseFirestore.instance.collection("police-requests").snapshots();
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
@@ -54,40 +46,45 @@ class _EditRequestState extends State<EditRequest> {
           icon: const Icon(Icons.arrow_back_ios),
           onPressed: () {
             Navigator.pushNamedAndRemoveUntil(
-                context, MyRequest.routeName, (route) => false);
+                context, PoliceRequest.routeName, (route) => false);
           },
         ),
         backgroundColor: Colors.green,
-        title: const Text('Edit My Request'),
+        title: const Text('Edit My Police Request'),
         centerTitle: true,
       ),
       backgroundColor: Colors.white,
       body: StreamBuilder<QuerySnapshot>(
-        stream: ambulanceRequestStream,
+        stream: policeRequestStream,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           //TO DO
           if (snapshot.hasError) {
-            return Stack(
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: const [
                 Text('Something went wrong'),
-                Center(
-                  child: CircularProgressIndicator(),
+                SizedBox(
+                  height: 10.0,
                 ),
+                CircularProgressIndicator(),
               ],
             );
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Stack(
-              children: const [
-                Text('Loading information'),
-                Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.purple,
+            return Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  CircularProgressIndicator(
                     strokeWidth: 5,
                   ),
-                ),
-              ],
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text('Loading information'),
+                ],
+              ),
             );
           }
 
@@ -254,10 +251,9 @@ class _EditRequestState extends State<EditRequest> {
                               bottom: 5,
                             ),
                             child: TextFormField(
-// obscureText: true,
                               controller: address,
                               onSaved: (value) {
-//Do something with the user input.
+                                //Do something with the user input.
                                 setState(() {
                                   address.text = value!;
                                 });
@@ -270,11 +266,6 @@ class _EditRequestState extends State<EditRequest> {
                                 hintText: 'Address',
                                 suffix: IconButton(
                                   onPressed: () async {
-// if (getLocation.currentPosition != null) {
-//   getLocation.currentPosition;
-// } else {
-//   return;
-// }
                                     getLocation.currentPosition;
                                     log.i(getLocation.getCurrentLocation());
 
@@ -301,7 +292,7 @@ class _EditRequestState extends State<EditRequest> {
                             onPressed: () async {
                               try {
                                 await firebaseFirestore
-                                    .collection('ambulance-requests')
+                                    .collection('police-requests')
                                     .doc(document.id)
                                     .get()
                                     .then(
@@ -368,7 +359,7 @@ class _EditRequestState extends State<EditRequest> {
                                   //writing to firebase
                                   //adding the details to the constructor
                                   await firebaseFirestore
-                                      .collection("ambulance-requests")
+                                      .collection("police-requests")
                                       .doc(document.id)
                                       .update({
                                     'fullName': fullName.text,
@@ -385,8 +376,10 @@ class _EditRequestState extends State<EditRequest> {
                                         timeInSecForIosWeb: 1,
                                         fontSize: 16),
                                   ); //writing to firebase
-                                  Navigator.pushNamedAndRemoveUntil(context,
-                                      MyRequest.routeName, (route) => false);
+                                  Navigator.pushNamedAndRemoveUntil(
+                                      context,
+                                      PoliceRequest.routeName,
+                                      (route) => false);
                                 } catch (e) {
                                   setState(() {
                                     const CircularProgressIndicator();
@@ -398,8 +391,6 @@ class _EditRequestState extends State<EditRequest> {
                                       timeInSecForIosWeb: 1,
                                       fontSize: 16);
                                 }
-                                Navigator.pushNamedAndRemoveUntil(context,
-                                    MyRequest.routeName, (route) => false);
                               },
                               child: const Text(
                                 "Update",
@@ -421,63 +412,5 @@ class _EditRequestState extends State<EditRequest> {
         },
       ),
     );
-  }
-
-  //            fetch user data            //
-  //////////////////////////////////////////
-  Future<dynamic> _getRequestData() async {
-/*    Stream<QuerySnapshot> ambulanceRequestStream =
-        FirebaseFirestore.instance.collection("ambulance-requests").snapshots();
-
-    StreamBuilder<QuerySnapshot>(
-      stream: ambulanceRequestStream,
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        //TO DO
-        if (snapshot.hasError) {
-          return Center(
-            child: Stack(
-              children: const [
-                Text('Something went wrong'),
-                CircularProgressIndicator(),
-              ],
-            ),
-          );
-        }
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: Stack(
-              children: const [
-                Text('Loading information'),
-                CircularProgressIndicator(),
-              ],
-            ),
-          );
-        }
-        snapshot.data!.docs.map(
-          (DocumentSnapshot document) async {
-            Map<String, dynamic> data =
-                document.data()! as Map<String, dynamic>;
-          },
-        );
-      },
-    );*/
-    await firebaseFirestore
-        .collection('ambulance-requests')
-        .doc()
-        .get()
-        .then((value) {
-      setState(
-        () {
-          // String uid = "";
-          fullName.text = value.data()!['fullName'].toString();
-          email.text = value.data()!['email'].toString();
-          phoneNumber.text = value.data()!['phoneNumber'].toString();
-          address.text = value.data()!['address'].toString();
-          emergencyTypeRequest.text =
-              value.data()!['emergencyTypeRequest'].toString();
-        },
-      );
-    });
   }
 }
