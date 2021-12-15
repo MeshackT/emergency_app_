@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:logger/logger.dart';
 
 import '../models/UserModel.dart';
@@ -18,9 +19,11 @@ class UserRegister extends StatefulWidget {
   State<UserRegister> createState() => _UserRegisterState();
 }
 
-class _UserRegisterState extends State<UserRegister> {
+class _UserRegisterState extends State<UserRegister>
+    with WidgetsBindingObserver {
   final _formKey = GlobalKey<FormState>();
   Logger log = Logger(printer: PrettyPrinter(colors: true));
+
   // AuthenticationClass authenticationClass = AuthenticationClass();
   GetLocation getLocation = GetLocation();
 
@@ -30,8 +33,26 @@ class _UserRegisterState extends State<UserRegister> {
   final TextEditingController phoneNumber = TextEditingController();
   final TextEditingController address = TextEditingController();
 
-  bool progressBar = false;
   bool passwordVisible = true;
+
+  Position? _currentPosition;
+  String latitudeData = "";
+  String longitudeData = "";
+
+  _getCurrentLocation() async {
+    try {
+      _currentPosition = await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.high)
+          .whenComplete(() => Fluttertoast.showToast(msg: "Location captured"));
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Could not capture your location");
+    }
+    setState(() {
+      latitudeData = (_currentPosition!.latitude).toString();
+      longitudeData = (_currentPosition!.longitude.toString());
+      address.text = latitudeData + " " + longitudeData;
+    });
+  }
 
   bool validationAndSave() {
     final form = _formKey.currentState;
@@ -40,6 +61,34 @@ class _UserRegisterState extends State<UserRegister> {
       return false;
     }
     return true;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // _uploadUserData();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.addObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    WidgetsBinding.instance!.addObserver(this);
+    switch (state) {
+      case AppLifecycleState.detached:
+        break;
+      case AppLifecycleState.resumed:
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        break;
+    }
   }
 
   @override
@@ -279,12 +328,12 @@ class _UserRegisterState extends State<UserRegister> {
                                   // ),
                                   suffix: IconButton(
                                     onPressed: () async {
-                                      getLocation.currentPosition;
-                                      log.i(getLocation.currentPosition);
+                                      _getCurrentLocation();
                                       setState(
                                         () {
-                                          address.text =
-                                              getLocation.currentAddress!;
+                                          address.text = latitudeData +
+                                              " " +
+                                              longitudeData;
                                         },
                                       );
                                     },
@@ -330,18 +379,14 @@ class _UserRegisterState extends State<UserRegister> {
                       onPressed: () {
                         // validationAndSave;
                         registerUsers(email.text, password.text);
-                        // try{
-                        //   authenticationClass
-                        //       .registerUsers(email.text, password.text)
-                        //       .whenComplete(() => Fluttertoast
-                        //       .showToast(msg: "account created successfully"),);
-                        //       Navigator.of(context).pushReplacement(
-                        //           MaterialPageRoute(builder: (context) =>
-                        //           const EmergencyType()),
-                        //           result: (route) => true);
-                        // }catch(e){
-                        //   Fluttertoast.showToast(msg: "ERROR: $e");
-                        // }
+                        Center(
+                            child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            CircularProgressIndicator(),
+                            Text(""),
+                          ],
+                        ));
                       },
                       child: const Text(
                         "Register",
@@ -439,7 +484,7 @@ class _UserRegisterState extends State<UserRegister> {
 
     Fluttertoast.showToast(msg: "account created successfully");
     Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => EmergencyType()),
+        MaterialPageRoute(builder: (context) => const EmergencyType()),
         result: (route) => false);
   }
 }

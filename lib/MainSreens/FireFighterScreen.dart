@@ -1,11 +1,11 @@
 import 'package:afpemergencyapplication/RequestAndHistory/FireFighterRequest.dart';
 import 'package:afpemergencyapplication/models/GetLocation.dart';
-import 'package:afpemergencyapplication/models/UserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:logger/logger.dart';
 
 class FireFighterScreen extends StatefulWidget {
@@ -16,9 +16,9 @@ class FireFighterScreen extends StatefulWidget {
   _FireFighterScreenState createState() => _FireFighterScreenState();
 }
 
-class _FireFighterScreenState extends State<FireFighterScreen> {
+class _FireFighterScreenState extends State<FireFighterScreen>
+    with WidgetsBindingObserver {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  UserModel userModel = UserModel();
   GetLocation getLocation = GetLocation();
   Logger log = Logger(printer: PrettyPrinter(colors: true));
 
@@ -31,11 +31,52 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
   TextEditingController address = TextEditingController();
   TextEditingController emergencyTypeRequest = TextEditingController();
 
+  Position? _currentPosition;
+  String latitudeData = "";
+  String longitudeData = "";
+
+  _getCurrentLocation() async {
+    try {
+      _currentPosition = await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.high)
+          .whenComplete(() => Fluttertoast.showToast(msg: "Location captured"));
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Could not capture your location");
+    }
+    setState(() {
+      latitudeData = (_currentPosition!.latitude).toString();
+      longitudeData = (_currentPosition!.longitude.toString());
+      address.text = latitudeData + " " + longitudeData;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     // _uploadUserData();
     _getUserData();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.addObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    WidgetsBinding.instance!.addObserver(this);
+    switch (state) {
+      case AppLifecycleState.detached:
+        break;
+      case AppLifecycleState.resumed:
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        break;
+    }
   }
 
   bool showProgressBar = false;
@@ -53,9 +94,6 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(
-                    height: 5.0,
-                  ),
                   Container(
                     margin: const EdgeInsets.only(bottom: 5, top: 0.0),
                     child: const Center(
@@ -82,9 +120,6 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
                         child: Column(
                           children: [
                             Container(
-                              margin: const EdgeInsets.only(
-                                bottom: 10,
-                              ),
                               child: TextFormField(
                                 controller: emergencyTypeRequest,
                                 onSaved: (value) {
@@ -185,9 +220,6 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
                               ),
                             ),
                             Container(
-                              margin: const EdgeInsets.only(
-                                bottom: 10,
-                              ),
                               child: TextFormField(
                                 controller: phoneNumber,
                                 onSaved: (value) {
@@ -245,19 +277,10 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
                                   hintText: 'Address',
                                   suffix: IconButton(
                                     onPressed: () async {
-                                      // if (getLocation.currentPosition != null) {
-                                      //   getLocation.currentPosition;
-                                      // } else {
-                                      //   return;
-                                      // }
-                                      getLocation.currentPosition;
-                                      log.i(getLocation.getCurrentLocation());
-                                      if (kDebugMode) {
-                                        print(getLocation.getCurrentLocation());
-                                      }
+                                      _getCurrentLocation();
                                       setState(() {
                                         address.text =
-                                            getLocation.currentAddress!;
+                                            latitudeData + " " + longitudeData;
                                       });
                                     },
                                     icon: const Icon(Icons.my_location),
@@ -274,7 +297,7 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
                     ),
                   ),
                   const SizedBox(
-                    height: 15.0,
+                    height: 5.0,
                   ),
                   SizedBox(
                     height: 50,
@@ -297,8 +320,11 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
                         ),
                       ),
                       onPressed: () {
-                        //Send this information to the other device
-                        sendRequest();
+                        if (emergencyTypeRequest.text.isEmpty) {
+                          Fluttertoast.showToast(msg: "Insert emergencyType");
+                        } else {
+                          sendRequest();
+                        }
                       },
                       child: const Text(
                         "Request",
@@ -334,6 +360,7 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
         .get()
         .then((value) {
       setState(() {
+        const CircularProgressIndicator();
         fullName.text = value.data()!['fullName'].toString();
         email.text = value.data()!['email'].toString();
         phoneNumber.text = value.data()!['phoneNumber'].toString();
@@ -345,11 +372,10 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
   //////////////////////////////////////////
 //     put data in the database         //
 // ///////////////////////////////////////
-  CollectionReference users =
-      FirebaseFirestore.instance.collection('fire-fighter-request');
-
   Future<void> sendRequest() {
-    // Call the user's CollectionReference to add a new user
+    CollectionReference users =
+        FirebaseFirestore.instance.collection('fire-fighter-request');
+    const CircularProgressIndicator();
     return users
         .add({
           'uid': uid,
@@ -366,7 +392,7 @@ class _FireFighterScreenState extends State<FireFighterScreen> {
             () => Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const FireFighterRequest(),
+                builder: (context) => FireFighterRequest(),
               ),
             ),
           ),

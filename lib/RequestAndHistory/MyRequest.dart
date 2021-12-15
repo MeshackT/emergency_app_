@@ -1,7 +1,6 @@
 import 'package:afpemergencyapplication/EditRequests/EditRequest.dart';
 import 'package:afpemergencyapplication/MainSreens/HomeScreen.dart';
 import 'package:afpemergencyapplication/RequestAndHistory/MainAlertTypeScreen.dart';
-import 'package:afpemergencyapplication/models/UserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,18 +15,38 @@ class MyRequest extends StatefulWidget {
   _MyRequestState createState() => _MyRequestState();
 }
 
-class _MyRequestState extends State<MyRequest> {
-  Logger logger = Logger();
+class _MyRequestState extends State<MyRequest> with WidgetsBindingObserver {
+  final GlobalKey<FormState> _formKey = GlobalKey();
+  final Logger logger = Logger();
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  User? user = FirebaseAuth.instance.currentUser;
-
-  UserModel userModel = UserModel();
-  List requestList = [];
-  String uid = "";
+  final User? user = FirebaseAuth.instance.currentUser;
+  final String uid = "";
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.addObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    WidgetsBinding.instance!.addObserver(this);
+    switch (state) {
+      case AppLifecycleState.detached:
+        break;
+      case AppLifecycleState.resumed:
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        break;
+    }
   }
 
   @override
@@ -36,15 +55,6 @@ class _MyRequestState extends State<MyRequest> {
         .collection("ambulance-requests")
         .where('owner', isEqualTo: user!.uid)
         .snapshots();
-    // Stream<QuerySnapshot> fireRequestStream = FirebaseFirestore.instance
-    //     .collection("fire-fighter-request")
-    //     .where('owner', isEqualTo: user!.uid)
-    //     .snapshots();
-    // Stream<QuerySnapshot> policeRequestStream = FirebaseFirestore.instance
-    //     .collection("police-requests")
-    //     .where('owner', isEqualTo: user!.uid)
-    //     .snapshots();
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.green,
@@ -69,7 +79,7 @@ class _MyRequestState extends State<MyRequest> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => EmergencyType(),
+                  builder: (context) => const EmergencyType(),
                 ),
               );
             },
@@ -173,10 +183,6 @@ class _MyRequestState extends State<MyRequest> {
                             ),
                           ],
                         ),
-                        // Text(
-                        //   data['emergencyTypeRequest'],
-                        //   style: const TextStyle(color: Colors.red),
-                        // ),
                         leading: CircleAvatar(
                           backgroundColor: Colors.grey,
                           child: Text(
@@ -217,17 +223,14 @@ class _MyRequestState extends State<MyRequest> {
                                 color: Colors.grey,
                               ),
                               onPressed: () async {
-                                setState(() {
-                                  const CircularProgressIndicator();
-                                });
                                 try {
-                                  FirebaseFirestore.instance
+                                  await FirebaseFirestore.instance
                                       .collection('ambulance-requests')
                                       .doc(data.id)
                                       .delete()
                                       .then(
                                         (value) => logger.i(data.id),
-                                  );
+                                      );
                                   Fluttertoast.showToast(
                                       msg: 'Request Deleted',
                                       toastLength: Toast.LENGTH_SHORT,
@@ -247,8 +250,10 @@ class _MyRequestState extends State<MyRequest> {
                                 }
                               },
                             ),
-                            const SizedBox(
-                              width: 10,
+                            const Text(
+                              "Await a call",
+                              style:
+                                  TextStyle(color: Colors.purple, fontSize: 14),
                             ),
                             IconButton(
                               icon: const Icon(
@@ -257,8 +262,11 @@ class _MyRequestState extends State<MyRequest> {
                                 color: Colors.grey,
                               ),
                               onPressed: () {
-                                Navigator.pushNamedAndRemoveUntil(context,
-                                    EditRequest.routeName, (route) => false);
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) => const EditRequest(),
+                                  ),
+                                );
                               },
                             ),
                           ],

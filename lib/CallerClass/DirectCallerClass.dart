@@ -1,32 +1,46 @@
+import 'package:afpemergencyapplication/MainSreens/HomeScreen.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:logger/logger.dart';
+
+Logger logger = Logger();
 
 class DirectCallerClass {
   callNumber() async {
-    const number = '011 894 7333'; //set the number here
-    await FlutterPhoneDirectCaller.callNumber(number);
+    try {
+      String number = '011 894 7333'; //set the number here
+      await (FlutterPhoneDirectCaller.callNumber(number))
+          .whenComplete(() => EmergencyType());
+    } catch (e) {
+      Fluttertoast.showToast(msg: "$e").whenComplete(() => EmergencyType());
+      logger.i("$e");
+      throw ("Error: $e");
+    }
   }
 
-  // Future<void> callAmbulanceNumber() async {
-  //   String number = "011 894 7333";
-  //   await FlutterPhoneDirectCaller.callNumber(int.parse(number).toString());
-  // }
-
   callFireFighterNumber() async {
-    String number = "0800055555";
-    await FlutterPhoneDirectCaller.callNumber(number);
+    try {
+      String number = "0800055555";
+      await (FlutterPhoneDirectCaller.callNumber(number)).whenComplete(
+        () => EmergencyType(),
+      );
+    } catch (e) {
+      Fluttertoast.showToast(msg: "$e").whenComplete(() => EmergencyType());
+      throw ("Error: $e");
+    }
   }
 
   callPoliceNumber() async {
-    String number = "10111";
-    await FlutterPhoneDirectCaller.callNumber(number.toString());
+    try {
+      String number = "10111";
+      await (FlutterPhoneDirectCaller.callNumber(number)).whenComplete(
+        () => EmergencyType(),
+      );
+    } catch (e) {
+      Fluttertoast.showToast(msg: "$e").whenComplete(
+        () => EmergencyType(),
+      );
+      throw ("Error: $e");
+    }
   }
-
-// launchPhoneURL(String phoneNumberCaller) async {
-//   String url = 'tel:' + phoneNumberCaller;
-//   if (await canLaunch(url)) {
-//     await launch(url);
-//   } else {
-//     throw 'Could not launch $url';
-//   }
-
 }

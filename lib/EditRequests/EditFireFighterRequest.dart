@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:logger/logger.dart';
 
 class EditFireFighterRequest extends StatefulWidget {
@@ -15,24 +16,76 @@ class EditFireFighterRequest extends StatefulWidget {
   _EditFireFighterRequestState createState() => _EditFireFighterRequestState();
 }
 
-class _EditFireFighterRequestState extends State<EditFireFighterRequest> {
-  FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-  User? user = FirebaseAuth.instance.currentUser;
+class _EditFireFighterRequestState extends State<EditFireFighterRequest>
+    with WidgetsBindingObserver {
+  final FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+  final User? user = FirebaseAuth.instance.currentUser;
 
-  final GlobalKey<FormState> _formKey = GlobalKey();
-  GetLocation getLocation = GetLocation();
-  Logger log = Logger(printer: PrettyPrinter(colors: true));
+  final GetLocation getLocation = GetLocation();
+  final Logger log = Logger(printer: PrettyPrinter(colors: true));
+  final _formKey3 = GlobalKey<FormState>();
 
   // String uid = "";
-  TextEditingController email = TextEditingController();
-  TextEditingController fullName = TextEditingController();
-  TextEditingController phoneNumber = TextEditingController();
-  TextEditingController address = TextEditingController();
-  TextEditingController emergencyTypeRequest = TextEditingController();
+  final TextEditingController email = TextEditingController();
+  final TextEditingController fullName = TextEditingController();
+  final TextEditingController phoneNumber = TextEditingController();
+  final TextEditingController address = TextEditingController();
+  final TextEditingController emergencyTypeRequest = TextEditingController();
+
+  Position? _currentPosition;
+  String latitudeData = "";
+  String longitudeData = "";
+
+  _getCurrentLocation() async {
+    try {
+      _currentPosition = await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.high)
+          .whenComplete(() => Fluttertoast.showToast(msg: "Location captured"));
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Could not capture your location");
+    }
+    setState(() {
+      latitudeData = (_currentPosition!.latitude).toString();
+      longitudeData = (_currentPosition!.longitude.toString());
+      address.text = latitudeData + " " + longitudeData;
+    });
+  }
+
+  bool validationAndSave() {
+    final form = _formKey3.currentState;
+    if (form!.validate()) {
+      form.save();
+      return false;
+    }
+    return true;
+  }
 
   @override
   void initState() {
     super.initState();
+    // _uploadUserData();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.addObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    WidgetsBinding.instance!.addObserver(this);
+    switch (state) {
+      case AppLifecycleState.detached:
+        break;
+      case AppLifecycleState.resumed:
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        break;
+    }
   }
 
   @override
@@ -40,6 +93,7 @@ class _EditFireFighterRequestState extends State<EditFireFighterRequest> {
     Stream<QuerySnapshot> fireFighterRequestStream = FirebaseFirestore.instance
         .collection("fire-fighter-request")
         .snapshots();
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
@@ -73,14 +127,19 @@ class _EditFireFighterRequestState extends State<EditFireFighterRequest> {
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [
-                Text('Loading information'),
-                CircularProgressIndicator(
-                  strokeWidth: 5,
-                ),
-              ],
+            return Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  CircularProgressIndicator(
+                    strokeWidth: 5,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text('Loading information'),
+                ],
+              ),
             );
           }
 
@@ -92,14 +151,13 @@ class _EditFireFighterRequestState extends State<EditFireFighterRequest> {
                 padding: const EdgeInsets.only(top: 20, right: 10, left: 10),
                 child: Card(
                   elevation: 8,
-                  child: Form(
-                    key: _formKey,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+                    child: Form(
+                      key: _formKey3,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          //////////////////////////
                           Container(
                             margin: const EdgeInsets.only(
                               bottom: 5,
@@ -110,6 +168,12 @@ class _EditFireFighterRequestState extends State<EditFireFighterRequest> {
                                 setState(() {
                                   emergencyTypeRequest.text = value!;
                                 });
+                              },
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return ("Enter emergency type");
+                                }
+                                return null;
                               },
                               textAlign: TextAlign.center,
                               style: const TextStyle(
@@ -183,6 +247,12 @@ class _EditFireFighterRequestState extends State<EditFireFighterRequest> {
                                   fullName.text = value!;
                                 });
                               },
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return ("Enter your name.");
+                                }
+                                return null;
+                              },
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                   fontSize: 14.0, color: Colors.purple),
@@ -250,9 +320,17 @@ class _EditFireFighterRequestState extends State<EditFireFighterRequest> {
                               controller: address,
                               onSaved: (value) {
                                 //Do something with the user input.
+                                _getCurrentLocation();
                                 setState(() {
-                                  address.text = value!;
+                                  address.text =
+                                      latitudeData + " " + longitudeData;
                                 });
+                              },
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return ("Enter your address.");
+                                }
+                                return null;
                               },
                               textAlign: TextAlign.center,
                               style: const TextStyle(
@@ -262,16 +340,12 @@ class _EditFireFighterRequestState extends State<EditFireFighterRequest> {
                                 hintText: 'Address',
                                 suffix: IconButton(
                                   onPressed: () async {
-                                    getLocation.currentPosition;
                                     log.i(getLocation.getCurrentLocation());
 
                                     if (kDebugMode) {
                                       print(getLocation.getCurrentLocation());
                                     }
-                                    setState(() {
-                                      address.text =
-                                          getLocation.currentAddress!;
-                                    });
+                                    setState(() {});
                                   },
                                   icon: const Icon(Icons.my_location),
                                   color: Colors.green,
@@ -286,6 +360,14 @@ class _EditFireFighterRequestState extends State<EditFireFighterRequest> {
                           ),
                           TextButton(
                             onPressed: () async {
+                              Center(
+                                  child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  CircularProgressIndicator(),
+                                  Text("Loading data"),
+                                ],
+                              ));
                               try {
                                 await firebaseFirestore
                                     .collection('fire-fighter-request')
@@ -301,15 +383,12 @@ class _EditFireFighterRequestState extends State<EditFireFighterRequest> {
                                         phoneNumber.text = data['phoneNumber'];
                                         address.text = data['address'];
                                         emergencyTypeRequest.text =
-                                            data['emergencyTypeRequest'];
+                                        data['emergencyTypeRequest'];
                                       },
                                     );
                                   },
                                 );
                               } catch (e) {
-                                setState(() {
-                                  const CircularProgressIndicator();
-                                });
                                 Fluttertoast.showToast(
                                     msg: '$e',
                                     toastLength: Toast.LENGTH_LONG,
@@ -346,46 +425,51 @@ class _EditFireFighterRequestState extends State<EditFireFighterRequest> {
                                               color: Colors.green)))),
                               onPressed: () async {
                                 //Send this information to the database
-                                setState(() {
-                                  const Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                });
-                                try {
-                                  //writing to firebase
-                                  //adding the details to the constructor
-                                  await firebaseFirestore
-                                      .collection("fire-fighter-request")
-                                      .doc(document.id)
-                                      .update({
-                                    'fullName': fullName.text,
-                                    'email': email.text,
-                                    'phoneNumber': phoneNumber.text,
-                                    'address': address.text,
-                                    'emergencyTypeRequest':
-                                        emergencyTypeRequest.text,
-                                  }).whenComplete(
-                                    () => Fluttertoast.showToast(
-                                        msg: 'Update Complete',
-                                        toastLength: Toast.LENGTH_SHORT,
+                                Center(
+                                    child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    CircularProgressIndicator(),
+                                    Text("Loading data"),
+                                  ],
+                                ));
+                                validationAndSave();
+                                if (emergencyTypeRequest.text.isEmpty) {
+                                  return;
+                                } else if (emergencyTypeRequest.text
+                                    .trim()
+                                    .isNotEmpty) {
+                                  try {
+                                    //writing to firebase
+                                    //adding the details to the constructor
+                                    return await firebaseFirestore
+                                        .collection("fire-fighter-request")
+                                        .doc(document.id)
+                                        .update({
+                                      'fullName': fullName.text.trim(),
+                                      'email': email.text.trim(),
+                                      'phoneNumber': phoneNumber.text.trim(),
+                                      'address': address.text.trim(),
+                                      'emergencyTypeRequest':
+                                          emergencyTypeRequest.text.trim(),
+                                    }).whenComplete(
+                                      () => Navigator.pushNamedAndRemoveUntil(
+                                          context,
+                                          FireFighterRequest.routeName,
+                                          (route) => false),
+                                    ); //writing to firebase
+
+                                  } catch (e) {
+                                    setState(() {
+                                      const CircularProgressIndicator();
+                                    });
+                                    Fluttertoast.showToast(
+                                        msg: '$e',
+                                        toastLength: Toast.LENGTH_LONG,
                                         gravity: ToastGravity.BOTTOM,
                                         timeInSecForIosWeb: 1,
-                                        fontSize: 16),
-                                  ); //writing to firebase
-                                  Navigator.pushNamedAndRemoveUntil(
-                                      context,
-                                      FireFighterRequest.routeName,
-                                      (route) => false);
-                                } catch (e) {
-                                  setState(() {
-                                    const CircularProgressIndicator();
-                                  });
-                                  Fluttertoast.showToast(
-                                      msg: '$e',
-                                      toastLength: Toast.LENGTH_LONG,
-                                      gravity: ToastGravity.BOTTOM,
-                                      timeInSecForIosWeb: 1,
-                                      fontSize: 16);
+                                        fontSize: 16);
+                                  }
                                 }
                               },
                               child: const Text(

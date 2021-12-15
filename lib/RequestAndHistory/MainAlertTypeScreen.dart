@@ -2,6 +2,7 @@ import 'package:afpemergencyapplication/MainSreens/HomeScreen.dart';
 import 'package:afpemergencyapplication/RequestAndHistory/FireFighterRequest.dart';
 import 'package:afpemergencyapplication/RequestAndHistory/MyRequest.dart';
 import 'package:afpemergencyapplication/RequestAndHistory/PoliceRequest.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class MainAlertTypeScreen extends StatefulWidget {
@@ -13,7 +14,36 @@ class MainAlertTypeScreen extends StatefulWidget {
   _MainAlertTypeScreenState createState() => _MainAlertTypeScreenState();
 }
 
-class _MainAlertTypeScreenState extends State<MainAlertTypeScreen> {
+class _MainAlertTypeScreenState extends State<MainAlertTypeScreen>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    // _uploadUserData();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.addObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    WidgetsBinding.instance!.addObserver(this);
+    switch (state) {
+      case AppLifecycleState.detached:
+        break;
+      case AppLifecycleState.resumed:
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +61,7 @@ class _MainAlertTypeScreenState extends State<MainAlertTypeScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => EmergencyType(),
+                builder: (context) => const EmergencyType(),
               ),
             );
           },
@@ -62,7 +92,7 @@ class _MainAlertTypeScreenState extends State<MainAlertTypeScreen> {
                 const SizedBox(
                   height: 20,
                 ),
-                Container(
+                SizedBox(
                   height: 100,
                   child: TextButton(
                     style: ButtonStyle(
@@ -101,7 +131,7 @@ class _MainAlertTypeScreenState extends State<MainAlertTypeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const FireFighterRequest()),
+                            builder: (context) => FireFighterRequest()),
                       );
                     },
                     child: const Text(
@@ -128,7 +158,7 @@ class _MainAlertTypeScreenState extends State<MainAlertTypeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const PoliceRequest(),
+                          builder: (context) => PoliceRequest(),
                         ),
                       );
                     },

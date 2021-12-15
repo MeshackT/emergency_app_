@@ -4,6 +4,7 @@ import 'package:afpemergencyapplication/RequestAndHistory/MainAlertTypeScreen.da
 import 'package:afpemergencyapplication/models/UserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:logger/logger.dart';
@@ -16,7 +17,8 @@ class FireFighterRequest extends StatefulWidget {
   _FireFighterRequestState createState() => _FireFighterRequestState();
 }
 
-class _FireFighterRequestState extends State<FireFighterRequest> {
+class _FireFighterRequestState extends State<FireFighterRequest>
+    with WidgetsBindingObserver {
   Logger logger = Logger();
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   User? user = FirebaseAuth.instance.currentUser;
@@ -24,6 +26,34 @@ class _FireFighterRequestState extends State<FireFighterRequest> {
   UserModel userModel = UserModel();
   List requestList = [];
   String uid = "";
+
+  @override
+  void initState() {
+    super.initState();
+    // _uploadUserData();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.addObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    WidgetsBinding.instance!.addObserver(this);
+    switch (state) {
+      case AppLifecycleState.detached:
+        break;
+      case AppLifecycleState.resumed:
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +86,7 @@ class _FireFighterRequestState extends State<FireFighterRequest> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => EmergencyType(),
+                  builder: (context) => const EmergencyType(),
                 ),
               );
             },
@@ -234,8 +264,10 @@ class _FireFighterRequestState extends State<FireFighterRequest> {
                                 }
                               },
                             ),
-                            const SizedBox(
-                              width: 10,
+                            const Text(
+                              "Await a call",
+                              style:
+                                  TextStyle(color: Colors.purple, fontSize: 14),
                             ),
                             IconButton(
                               icon: const Icon(
@@ -244,10 +276,12 @@ class _FireFighterRequestState extends State<FireFighterRequest> {
                                 color: Colors.grey,
                               ),
                               onPressed: () {
-                                Navigator.pushNamedAndRemoveUntil(
-                                    context,
-                                    EditFireFighterRequest.routeName,
-                                    (route) => false);
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const EditFireFighterRequest(),
+                                  ),
+                                );
                               },
                             ),
                           ],

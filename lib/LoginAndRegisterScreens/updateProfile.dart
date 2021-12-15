@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:logger/logger.dart';
 
 // import 'package:geocoding/geocoding.dart';
@@ -21,7 +22,8 @@ class UpdateProfile extends StatefulWidget {
   State<UpdateProfile> createState() => _UpdateProfileState();
 }
 
-class _UpdateProfileState extends State<UpdateProfile> {
+class _UpdateProfileState extends State<UpdateProfile>
+    with WidgetsBindingObserver {
   final GlobalKey<FormState> _formKey = GlobalKey();
   UserModel userModel = UserModel();
   GetLocation getLocation = GetLocation();
@@ -35,11 +37,52 @@ class _UpdateProfileState extends State<UpdateProfile> {
   TextEditingController phoneNumber = TextEditingController();
   TextEditingController address = TextEditingController();
 
+  Position? _currentPosition;
+  String latitudeData = "";
+  String longitudeData = "";
+
+  _getCurrentLocation() async {
+    try {
+      _currentPosition = await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.high)
+          .whenComplete(() => Fluttertoast.showToast(msg: "Location captured"));
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Could not capture your location");
+    }
+    setState(() {
+      latitudeData = (_currentPosition!.latitude).toString();
+      longitudeData = (_currentPosition!.longitude.toString());
+      address.text = latitudeData + " " + longitudeData;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     // _uploadUserData();
     _getUserData();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.addObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    WidgetsBinding.instance!.addObserver(this);
+    switch (state) {
+      case AppLifecycleState.detached:
+        break;
+      case AppLifecycleState.resumed:
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        break;
+    }
   }
 
   bool validationAndSave() {
@@ -257,19 +300,10 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                   hintText: 'Address',
                                   suffix: IconButton(
                                     onPressed: () async {
-                                      // _determinePosition();
-                                      // _getCurrentLocation();
-                                      // if (getLocation.currentPosition != null) {
-                                      //   return getLocation.currentPosition;
-                                      // } else {
-                                      //   return;
-                                      // }
-                                      getLocation.currentPosition;
-                                      log.i(getLocation.getCurrentLocation());
-
+                                      _getCurrentLocation();
                                       setState(() {
                                         address.text =
-                                            getLocation.currentAddress!;
+                                            latitudeData + " " + longitudeData;
                                       });
                                     },
                                     icon: const Icon(Icons.my_location),
@@ -307,6 +341,14 @@ class _UpdateProfileState extends State<UpdateProfile> {
                                       side: const BorderSide(
                                           color: Colors.green)))),
                       onPressed: () {
+                        Center(
+                            child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: const [
+                            CircularProgressIndicator(),
+                            Text("Loading data"),
+                          ],
+                        ));
                         _uploadUserData();
                       },
                       child: const Text(

@@ -7,21 +7,18 @@ import 'package:afpemergencyapplication/MainSreens/ThreeButtonsScreens.dart';
 import 'package:afpemergencyapplication/RequestAndHistory/MainAlertTypeScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
 
 class EmergencyType extends StatefulWidget {
-  EmergencyType({Key? key}) : super(key: key);
+  const EmergencyType({Key? key}) : super(key: key);
   static const routeName = '/emergencyHomeScreen';
 
   @override
   State<EmergencyType> createState() => _EmergencyTypeState();
 }
 
-class _EmergencyTypeState extends State<EmergencyType> {
+class _EmergencyTypeState extends State<EmergencyType>
+    with WidgetsBindingObserver {
   int _currentIndex = 0;
-  Logger log = Logger();
-  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
-  User? user = FirebaseAuth.instance.currentUser;
 
   final List<Widget> _tabs = const [
     ThreeButtonsScreen(),
@@ -33,6 +30,28 @@ class _EmergencyTypeState extends State<EmergencyType> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    WidgetsBinding.instance!.addObserver(this);
+    switch (state) {
+      case AppLifecycleState.detached:
+        break;
+      case AppLifecycleState.resumed:
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        break;
+    }
   }
 
   @override
@@ -180,20 +199,20 @@ class _EmergencyTypeState extends State<EmergencyType> {
 
   Future<void> selectedItem(BuildContext context, item) async {
     final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    User? user = FirebaseAuth.instance.currentUser;
+
     switch (item) {
       case 0:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => MainAlertTypeScreen()),
+          MaterialPageRoute(builder: (context) => const MainAlertTypeScreen()),
         );
         break;
       case 1:
         Navigator.pushNamedAndRemoveUntil(
             context, UserProfile.routeName, (route) => false);
-        log.i("user ID " + user!.uid);
         break;
       case 2:
-        print("User Logged out");
         await firebaseAuth.signOut();
         Navigator.pushNamedAndRemoveUntil(
             context, LogIn.routeName, (route) => false);

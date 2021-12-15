@@ -48,6 +48,7 @@ dependencies:
   url_launcher: ^6.0.12
   swipedetector: ^1.2.0
   localstorage: ^4.0.0+1
+  move_to_background: ^1.0.2
 
 dev_dependencies:
   flutter_test:

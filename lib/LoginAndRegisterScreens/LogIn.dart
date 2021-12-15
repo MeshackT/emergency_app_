@@ -1,7 +1,6 @@
 import 'package:afpemergencyapplication/LoginAndRegisterScreens/PasswordReset.dart';
 import 'package:afpemergencyapplication/MainSreens/HomeScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:localstorage/localstorage.dart';
@@ -19,11 +18,9 @@ class LogIn extends StatefulWidget {
   State<LogIn> createState() => _LogInState();
 }
 
-class _LogInState extends State<LogIn> {
+class _LogInState extends State<LogIn> with WidgetsBindingObserver {
   final GlobalKey<FormState> _formKey = GlobalKey();
   Logger log = Logger();
-
-  bool progressBar = false;
   bool passwordVisible = true;
 
   bool validationAndSave() {
@@ -38,6 +35,34 @@ class _LogInState extends State<LogIn> {
   //controllers
   TextEditingController email = TextEditingController();
   TextEditingController password = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // _uploadUserData();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.addObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    WidgetsBinding.instance!.addObserver(this);
+    switch (state) {
+      case AppLifecycleState.detached:
+        break;
+      case AppLifecycleState.resumed:
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -193,19 +218,19 @@ class _LogInState extends State<LogIn> {
                                   ),
                                 ),
                               ),
-                              onPressed: () async {
+                              onPressed: () {
                                 if (_formKey.currentState!.validate()) {
                                   FocusScope.of(context).unfocus();
-                                  setState(() {
-                                    const Center(
-                                      child: CircularProgressIndicator(
-                                        color: Colors.green,
-                                      ),
-                                    );
-                                  });
-                                  //get the user information
                                   _userSignIn(email.text, password.text);
                                 }
+                                Center(
+                                    child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    CircularProgressIndicator(),
+                                    Text(""),
+                                  ],
+                                ));
                               },
                               child: const Text(
                                 "LogIn",
@@ -219,9 +244,6 @@ class _LogInState extends State<LogIn> {
 
                           TextButton(
                             onPressed: () {
-                              if (kDebugMode) {
-                                print('register clicked');
-                              }
                               Navigator.of(context)
                                   .pushReplacementNamed(UserRegister.routeName);
                             },
@@ -297,18 +319,12 @@ class _LogInState extends State<LogIn> {
           .signInWithEmailAndPassword(
               email: email.trim().toLowerCase(), password: password.trim())
           .then((uid) => {
-                setState(
-                  () {
-                    const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  },
-                ),
                 log.i(user!.uid + " logged in"),
                 Fluttertoast.showToast(msg: "Login Success"),
                 Navigator.pushAndRemoveUntil(
                     context,
-                    MaterialPageRoute(builder: (context) => EmergencyType()),
+                    MaterialPageRoute(
+                        builder: (context) => const EmergencyType()),
                     (route) => false),
               });
     } on FirebaseAuthException catch (e) {
@@ -322,15 +338,7 @@ class _LogInState extends State<LogIn> {
             timeInSecForIosWeb: 1,
             textColor: Colors.grey,
             fontSize: 16.0);
-        setState(() {
-          const Center(
-            child: CircularProgressIndicator(),
-          );
-        });
       } else if (e.code == 'wrong-password') {
-        if (kDebugMode) {
-          print('Wrong password provided for that user.');
-        }
         log.i("wrong password");
         Fluttertoast.showToast(
             msg: 'Wrong password provided for that user.',
@@ -339,29 +347,7 @@ class _LogInState extends State<LogIn> {
             timeInSecForIosWeb: 1,
             textColor: Colors.grey,
             fontSize: 16.0);
-        setState(() {
-          const Center(
-            child: CircularProgressIndicator(),
-          );
-        });
       }
     }
   }
-
-// void addItemsToLocalStorage() {
-//   storage.setItem('name', 'Abolfazl');
-//   storage.setItem('family', 'Roshanzamir');
-//
-//   final info = json.encode({'name': 'Darush', 'family': 'Roshanzami'});
-//   storage.setItem('info', info);
-// }
-//get user ID
-// void getitemFromLocalStorage() {
-//   final name = storage.getItem("info");
-//
-//   Map<String, dynamic> info = json.decode(name);
-//   final info_name = info['uid'];
-//   print("User key ID: $info_name");
-//   log.i("User Key ID: $info_name");
-// }
 }

@@ -1,12 +1,11 @@
 import 'package:afpemergencyapplication/RequestAndHistory/MyRequest.dart';
 import 'package:afpemergencyapplication/models/GetLocation.dart';
-import 'package:afpemergencyapplication/models/Requests.dart';
-import 'package:afpemergencyapplication/models/UserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:logger/logger.dart';
 
 class AmbulanceScreen extends StatefulWidget {
@@ -17,14 +16,17 @@ class AmbulanceScreen extends StatefulWidget {
   _AmbulanceScreenState createState() => _AmbulanceScreenState();
 }
 
-class _AmbulanceScreenState extends State<AmbulanceScreen> {
+class _AmbulanceScreenState extends State<AmbulanceScreen>
+    with WidgetsBindingObserver {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  UserModel userModel = UserModel();
-  Request request = Request();
   GetLocation getLocation = GetLocation();
-  Logger log = Logger(printer: PrettyPrinter(colors: true));
+  Logger log = Logger(
+    printer: PrettyPrinter(colors: true),
+  );
 
   User? user = FirebaseAuth.instance.currentUser;
+  CollectionReference users =
+      FirebaseFirestore.instance.collection('ambulance-requests');
 
   String uid = "";
   TextEditingController email = TextEditingController();
@@ -33,19 +35,56 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
   TextEditingController address = TextEditingController();
   TextEditingController emergencyTypeRequest = TextEditingController();
 
+  Position? _currentPosition;
+  String latitudeData = "";
+  String longitudeData = "";
+
+  _getCurrentLocation() async {
+    try {
+      _currentPosition = await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.high)
+          .whenComplete(() => Fluttertoast.showToast(msg: "Location captured"));
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Could not capture your location");
+    }
+    setState(() {
+      latitudeData = (_currentPosition!.latitude).toString();
+      longitudeData = (_currentPosition!.longitude.toString());
+      address.text = latitudeData + " " + longitudeData;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     // _uploadUserData();
     _getUserData();
+    WidgetsBinding.instance!.addObserver(this);
   }
 
-  bool showProgressBar = false;
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.addObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    WidgetsBinding.instance!.addObserver(this);
+    switch (state) {
+      case AppLifecycleState.detached:
+        break;
+      case AppLifecycleState.resumed:
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final Stream<QuerySnapshot> _usersStream =
-        FirebaseFirestore.instance.collection('ambulance-requests').snapshots();
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -56,9 +95,6 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(
-                    height: 5.0,
-                  ),
                   Container(
                     margin: const EdgeInsets.only(bottom: 5, top: 0.0),
                     child: const Center(
@@ -247,20 +283,12 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                                   hintText: 'Address',
                                   suffix: IconButton(
                                     onPressed: () async {
-                                      // if (getLocation.currentPosition != null) {
-                                      //   getLocation.currentPosition;
-                                      // } else {
-                                      //   return;
-                                      // }
-                                      getLocation.currentPosition;
-                                      log.i(getLocation.getCurrentLocation());
+                                      //getLocation.currentPosition;
+                                      _getCurrentLocation();
 
-                                      if (kDebugMode) {
-                                        print(getLocation.getCurrentLocation());
-                                      }
                                       setState(() {
                                         address.text =
-                                            getLocation.currentAddress!;
+                                            latitudeData + " " + longitudeData;
                                       });
                                     },
                                     icon: const Icon(Icons.my_location),
@@ -277,7 +305,7 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                     ),
                   ),
                   const SizedBox(
-                    height: 15.0,
+                    height: 5.0,
                   ),
                   SizedBox(
                     height: 50,
@@ -297,10 +325,11 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
                                           color: Colors.green)))),
                       onPressed: () async {
                         //Send this information to the database
-                        setState(() {
-                          CircularProgressIndicator();
-                        });
-                        addRequest();
+                        if (emergencyTypeRequest.text.isEmpty) {
+                          Fluttertoast.showToast(msg: "Insert emergencyType");
+                        } else {
+                          addRequest();
+                        }
                       },
                       child: const Text(
                         "Request",
@@ -326,8 +355,6 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
   Future<void> _getUserData() async {
     //instantiate the classes
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-    final _auth = FirebaseAuth.instance;
-    User? user = _auth.currentUser;
 
     await firebaseFirestore
         .collection('users')
@@ -348,8 +375,6 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
 //////////////////////////////////////////
 //     put data in the database         //
 // ///////////////////////////////////////
-  CollectionReference users =
-      FirebaseFirestore.instance.collection('ambulance-requests');
 
   Future<void> addRequest() {
     User? user = FirebaseAuth.instance.currentUser;
@@ -375,4 +400,37 @@ class _AmbulanceScreenState extends State<AmbulanceScreen> {
               Fluttertoast.showToast(msg: "failed to send details $error"),
         );
   }
+
+//get location
+
+// Position? _currentPosition;
+// String? _currentAddress;
+//
+// _getCurrentLocation() {
+//   Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
+//       .then((Position position) {
+//     setState(() {
+//       _currentPosition = position;
+//     });
+//     log.i("Location: $_currentPosition");
+//     // _getAddressFromLatLng();
+//   }).catchError((e) {
+//     print(e);
+//   });
+// }
+//
+// _getAddressFromLatLng() async {
+//   try {
+//     List<Placemark> p = await placemarkFromCoordinates(
+//         _currentPosition!.latitude, _currentPosition!.longitude);
+//     Placemark place = p[0];
+//     setState(() {
+//       _currentAddress =
+//           "${place.locality}, ${place.postalCode}, ${place.country}";
+//     });
+//   } catch (e) {
+//     log.i("Error $e");
+//   }
+// }
+
 }

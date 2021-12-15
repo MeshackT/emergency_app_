@@ -1,11 +1,11 @@
 import 'package:afpemergencyapplication/RequestAndHistory/PoliceRequest.dart';
 import 'package:afpemergencyapplication/models/GetLocation.dart';
-import 'package:afpemergencyapplication/models/UserModel.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:logger/logger.dart';
 
 class PoliceScreen extends StatefulWidget {
@@ -16,12 +16,11 @@ class PoliceScreen extends StatefulWidget {
   _PoliceScreenState createState() => _PoliceScreenState();
 }
 
-class _PoliceScreenState extends State<PoliceScreen> {
+class _PoliceScreenState extends State<PoliceScreen>
+    with WidgetsBindingObserver {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  UserModel userModel = UserModel();
   GetLocation getLocation = GetLocation();
   Logger log = Logger(printer: PrettyPrinter(colors: true));
-
   User? user = FirebaseAuth.instance.currentUser;
 
   String uid = "";
@@ -31,15 +30,52 @@ class _PoliceScreenState extends State<PoliceScreen> {
   TextEditingController address = TextEditingController();
   TextEditingController emergencyTypeRequest = TextEditingController();
 
+  Position? _currentPosition;
+  String latitudeData = "";
+  String longitudeData = "";
+
+  _getCurrentLocation() async {
+    try {
+      _currentPosition = await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.high)
+          .whenComplete(() => Fluttertoast.showToast(msg: "Location captured"));
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Could not capture your location");
+    }
+    setState(() {
+      latitudeData = (_currentPosition!.latitude).toString();
+      longitudeData = (_currentPosition!.longitude.toString());
+      address.text = latitudeData + " " + longitudeData;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    // _uploadUserData();
     _getUserData();
+    WidgetsBinding.instance!.addObserver(this);
   }
 
-  bool showProgressBar = false;
-  bool progressBar = false;
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.addObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    WidgetsBinding.instance!.addObserver(this);
+    switch (state) {
+      case AppLifecycleState.detached:
+        break;
+      case AppLifecycleState.resumed:
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        break;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +119,7 @@ class _PoliceScreenState extends State<PoliceScreen> {
                           children: [
                             Container(
                               margin: const EdgeInsets.only(
-                                bottom: 10,
+                                bottom: 5,
                               ),
                               child: TextFormField(
                                 controller: emergencyTypeRequest,
@@ -112,7 +148,6 @@ class _PoliceScreenState extends State<PoliceScreen> {
                               ),
                             ),
                             Container(
-                              margin: const EdgeInsets.only(bottom: 5, top: 5),
                               child: TextFormField(
                                 controller: email,
                                 onSaved: (value) {
@@ -184,9 +219,6 @@ class _PoliceScreenState extends State<PoliceScreen> {
                               ),
                             ),
                             Container(
-                              margin: const EdgeInsets.only(
-                                bottom: 5,
-                              ),
                               child: TextFormField(
                                 controller: phoneNumber,
                                 onSaved: (value) {
@@ -244,19 +276,10 @@ class _PoliceScreenState extends State<PoliceScreen> {
                                   hintText: 'Address',
                                   suffix: IconButton(
                                     onPressed: () async {
-                                      // if (getLocation.currentPosition != null) {
-                                      //   getLocation.currentPosition;
-                                      // } else {
-                                      //   return;
-                                      // }
-                                      getLocation.currentPosition;
-                                      log.i(getLocation.getCurrentLocation());
-                                      if (kDebugMode) {
-                                        print(getLocation.getCurrentLocation());
-                                      }
+                                      _getCurrentLocation();
                                       setState(() {
                                         address.text =
-                                            getLocation.currentAddress!;
+                                            latitudeData + " " + longitudeData;
                                       });
                                     },
                                     icon: const Icon(Icons.my_location),
@@ -296,7 +319,11 @@ class _PoliceScreenState extends State<PoliceScreen> {
                       ),
                       onPressed: () {
                         //Send this information to the other device
-                        sendRequest();
+                        if (emergencyTypeRequest.text.isEmpty) {
+                          Fluttertoast.showToast(msg: "Insert emergencyType");
+                        } else {
+                          sendRequest();
+                        }
                       },
                       child: const Text(
                         "Request",
@@ -322,8 +349,6 @@ class _PoliceScreenState extends State<PoliceScreen> {
   Future<void> _getUserData() async {
     //instantiate the classes
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
-    final _auth = FirebaseAuth.instance;
-    User? user = _auth.currentUser;
 
     await firebaseFirestore
         .collection('users')
@@ -343,10 +368,9 @@ class _PoliceScreenState extends State<PoliceScreen> {
 //////////////////////////////////////////
 //     put data in the database         //
 // ///////////////////////////////////////
-  CollectionReference users =
-      FirebaseFirestore.instance.collection('police-requests');
-
   Future<void> sendRequest() {
+    CollectionReference users =
+        FirebaseFirestore.instance.collection('police-requests');
     // Call the user's CollectionReference to add a new user
     return users
         .add({
@@ -363,7 +387,7 @@ class _PoliceScreenState extends State<PoliceScreen> {
               .whenComplete(() => Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const PoliceRequest(),
+                      builder: (context) => PoliceRequest(),
                     ),
                   )),
         )

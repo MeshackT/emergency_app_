@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '''
 package:fluttertoast/fluttertoast.dart''';
+import 'package:geolocator/geolocator.dart';
 import 'package:logger/logger.dart';
 
 class EditRequest extends StatefulWidget {
@@ -19,11 +20,10 @@ class EditRequest extends StatefulWidget {
   _EditRequestState createState() => _EditRequestState();
 }
 
-class _EditRequestState extends State<EditRequest> {
+class _EditRequestState extends State<EditRequest> with WidgetsBindingObserver {
   FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
   User? user = FirebaseAuth.instance.currentUser;
 
-  final GlobalKey<FormState> _formKey = GlobalKey();
   GetLocation getLocation = GetLocation();
   Logger log = Logger(printer: PrettyPrinter(colors: true));
 
@@ -33,9 +33,62 @@ class _EditRequestState extends State<EditRequest> {
   TextEditingController address = TextEditingController();
   TextEditingController emergencyTypeRequest = TextEditingController();
 
+  final GlobalKey<FormState> _formKey1 = GlobalKey();
+
+  Position? _currentPosition;
+  String latitudeData = "";
+  String longitudeData = "";
+
+  _getCurrentLocation() async {
+    try {
+      _currentPosition = await Geolocator.getCurrentPosition(
+              desiredAccuracy: LocationAccuracy.high)
+          .whenComplete(() => Fluttertoast.showToast(msg: "Location captured"));
+    } catch (e) {
+      Fluttertoast.showToast(msg: "Could not capture your location");
+    }
+    setState(() {
+      latitudeData = (_currentPosition!.latitude).toString();
+      longitudeData = (_currentPosition!.longitude.toString());
+      address.text = latitudeData + " " + longitudeData;
+    });
+  }
+
+  bool validationAndSave() {
+    final form = _formKey1.currentState;
+    if (form!.validate()) {
+      form.save();
+      return false;
+    }
+    return true;
+  }
+
   @override
   void initState() {
     super.initState();
+    // _uploadUserData();
+    WidgetsBinding.instance!.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance!.addObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    WidgetsBinding.instance!.addObserver(this);
+    switch (state) {
+      case AppLifecycleState.detached:
+        break;
+      case AppLifecycleState.resumed:
+        break;
+      case AppLifecycleState.inactive:
+        break;
+      case AppLifecycleState.paused:
+        break;
+    }
   }
 
   @override
@@ -75,14 +128,19 @@ class _EditRequestState extends State<EditRequest> {
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: const [
-                Text('Loading information'),
-                CircularProgressIndicator(
-                  strokeWidth: 5,
-                ),
-              ],
+            return Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  CircularProgressIndicator(
+                    strokeWidth: 5,
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text('Loading information'),
+                ],
+              ),
             );
           }
 
@@ -95,13 +153,12 @@ class _EditRequestState extends State<EditRequest> {
                 child: Card(
                   elevation: 8,
                   child: Form(
-                    key: _formKey,
+                    key: _formKey1,
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          //////////////////////////
                           Container(
                             margin: const EdgeInsets.only(
                               bottom: 5,
@@ -112,6 +169,12 @@ class _EditRequestState extends State<EditRequest> {
                                 setState(() {
                                   emergencyTypeRequest.text = value!;
                                 });
+                              },
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return ("Enter emergency type");
+                                }
+                                return null;
                               },
                               textAlign: TextAlign.center,
                               style: const TextStyle(
@@ -146,10 +209,10 @@ class _EditRequestState extends State<EditRequest> {
                               },
                               validator: (value) {
                                 if (value!.isEmpty) {
-                                  return ("Enter email");
+                                  return ("Enter an email");
                                 }
                                 if (!value.contains("@")) {
-                                  return ("Please Enter a valid email");
+                                  return ("Please Enter a valid valid email");
                                 }
                                 return null;
                               },
@@ -185,6 +248,12 @@ class _EditRequestState extends State<EditRequest> {
                                   fullName.text = value!;
                                 });
                               },
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return ("Enter your name.");
+                                }
+                                return null;
+                              },
                               textAlign: TextAlign.center,
                               style: const TextStyle(
                                   fontSize: 14.0, color: Colors.purple),
@@ -210,11 +279,6 @@ class _EditRequestState extends State<EditRequest> {
                             ),
                             child: TextFormField(
                               controller: phoneNumber,
-                              onSaved: (value) {
-                                setState(() {
-                                  phoneNumber.text = value!;
-                                });
-                              },
                               validator: (value) {
                                 if (value!.isEmpty) {
                                   return ("10 digit number is required");
@@ -224,6 +288,11 @@ class _EditRequestState extends State<EditRequest> {
                                 } else if (value.length > 10) {
                                   return ("Too many digits entered");
                                 }
+                              },
+                              onSaved: (value) {
+                                setState(() {
+                                  phoneNumber.text = value!;
+                                });
                               },
                               textAlign: TextAlign.center,
                               style: const TextStyle(
@@ -250,6 +319,12 @@ class _EditRequestState extends State<EditRequest> {
                             ),
                             child: TextFormField(
                               controller: address,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return ("Enter an address");
+                                }
+                                return null;
+                              },
                               onSaved: (value) {
                                 //Do something with the user input.
                                 setState(() {
@@ -264,15 +339,10 @@ class _EditRequestState extends State<EditRequest> {
                                 hintText: 'Address',
                                 suffix: IconButton(
                                   onPressed: () async {
-                                    getLocation.currentPosition;
-                                    log.i(getLocation.getCurrentLocation());
-
-                                    if (kDebugMode) {
-                                      print(getLocation.getCurrentLocation());
-                                    }
+                                    _getCurrentLocation();
                                     setState(() {
                                       address.text =
-                                          getLocation.currentAddress!;
+                                          latitudeData + " " + longitudeData;
                                     });
                                   },
                                   icon: const Icon(Icons.my_location),
@@ -288,6 +358,14 @@ class _EditRequestState extends State<EditRequest> {
                           ),
                           TextButton(
                             onPressed: () async {
+                              Center(
+                                  child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: const [
+                                  CircularProgressIndicator(),
+                                  Text("Loading data"),
+                                ],
+                              ));
                               try {
                                 await firebaseFirestore
                                     .collection('ambulance-requests')
@@ -303,15 +381,12 @@ class _EditRequestState extends State<EditRequest> {
                                         phoneNumber.text = data['phoneNumber'];
                                         address.text = data['address'];
                                         emergencyTypeRequest.text =
-                                            data['emergencyTypeRequest'];
+                                        data['emergencyTypeRequest'];
                                       },
                                     );
                                   },
                                 );
                               } catch (e) {
-                                setState(() {
-                                  const CircularProgressIndicator();
-                                });
                                 Fluttertoast.showToast(
                                     msg: '$e',
                                     toastLength: Toast.LENGTH_LONG,
@@ -348,43 +423,51 @@ class _EditRequestState extends State<EditRequest> {
                                               color: Colors.green)))),
                               onPressed: () async {
                                 //Send this information to the database
+                                Center(
+                                    child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    CircularProgressIndicator(),
+                                    Text("Loading data"),
+                                  ],
+                                ));
+                                validationAndSave();
+                                if (emergencyTypeRequest.text.isEmpty) {
+                                  return;
+                                } else if (emergencyTypeRequest.text
+                                    .trim()
+                                    .isNotEmpty) {
+                                  try {
+                                    //writing to firebase
+                                    //adding the details to the constructor
+                                    return await firebaseFirestore
+                                        .collection("ambulance-requests")
+                                        .doc(document.id)
+                                        .update({
+                                      'fullName': fullName.text.trim(),
+                                      'email': email.text.trim(),
+                                      'phoneNumber': phoneNumber.text.trim(),
+                                      'address': address.text.trim(),
+                                      'emergencyTypeRequest':
+                                          emergencyTypeRequest.text.trim(),
+                                    }).whenComplete(
+                                      () => Navigator.pushNamedAndRemoveUntil(
+                                          context,
+                                          MyRequest.routeName,
+                                          (route) => false),
+                                    ); //writing to firebase
 
-                                try {
-                                  //writing to firebase
-                                  //adding the details to the constructor
-
-                                  const CircularProgressIndicator();
-
-                                  await firebaseFirestore
-                                      .collection("ambulance-requests")
-                                      .doc(document.id)
-                                      .update({
-                                    'fullName': fullName.text,
-                                    'email': email.text,
-                                    'phoneNumber': phoneNumber.text,
-                                    'address': address.text,
-                                    'emergencyTypeRequest':
-                                        emergencyTypeRequest.text,
-                                  }).whenComplete(
-                                        () => Fluttertoast.showToast(
-                                        msg: 'Update Complete',
-                                        toastLength: Toast.LENGTH_SHORT,
+                                  } catch (e) {
+                                    setState(() {
+                                      const CircularProgressIndicator();
+                                    });
+                                    Fluttertoast.showToast(
+                                        msg: '$e',
+                                        toastLength: Toast.LENGTH_LONG,
                                         gravity: ToastGravity.BOTTOM,
                                         timeInSecForIosWeb: 1,
-                                        fontSize: 16),
-                                  ); //writing to firebase
-                                  Navigator.pushNamedAndRemoveUntil(context,
-                                      MyRequest.routeName, (route) => false);
-                                } catch (e) {
-                                  setState(() {
-                                    const CircularProgressIndicator();
-                                  });
-                                  Fluttertoast.showToast(
-                                      msg: '$e',
-                                      toastLength: Toast.LENGTH_LONG,
-                                      gravity: ToastGravity.BOTTOM,
-                                      timeInSecForIosWeb: 1,
-                                      fontSize: 16);
+                                        fontSize: 16);
+                                  }
                                 }
                               },
                               child: const Text(
