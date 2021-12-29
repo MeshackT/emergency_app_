@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <application
         android:icon="@mipmap/ic_launcher_foreground"
-        android:label="afpemergencyapplication">
+        android:label="AFP Emergency">
         <activity
             android:name=".MainActivity"
             android:noHistory="true"
