@@ -383,7 +383,7 @@ class _EditFireFighterRequestState extends State<EditFireFighterRequest>
                                         phoneNumber.text = data['phoneNumber'];
                                         address.text = data['address'];
                                         emergencyTypeRequest.text =
-                                        data['emergencyTypeRequest'];
+                                            data['emergencyTypeRequest'];
                                       },
                                     );
                                   },

@@ -381,7 +381,7 @@ class _EditRequestState extends State<EditRequest> with WidgetsBindingObserver {
                                         phoneNumber.text = data['phoneNumber'];
                                         address.text = data['address'];
                                         emergencyTypeRequest.text =
-                                        data['emergencyTypeRequest'];
+                                            data['emergencyTypeRequest'];
                                       },
                                     );
                                   },

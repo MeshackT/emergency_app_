@@ -377,7 +377,7 @@ class _EditPoliceRequestState extends State<EditPoliceRequest>
                                         phoneNumber.text = data['phoneNumber'];
                                         address.text = data['address'];
                                         emergencyTypeRequest.text =
-                                        data['emergencyTypeRequest'];
+                                            data['emergencyTypeRequest'];
                                       },
                                     );
                                   },
